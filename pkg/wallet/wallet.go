@@ -102,6 +102,25 @@ func New(c *Config, id id.ID, chain *blockchain.Blockchain) *Wallet {
 // b *block.Block the block that is "safe block amount"
 // down from the last block on the main chain
 // TODO
+// 1. Make sure to update liminal transactions properly
+// be incrementing the priorities, removing duplicates,
+// and returning which ones are "old"
+// 2. Resend out "old" liminal transactions with the
+// lock time incremented (in order to give the transaction
+// a different hash since lock time essentially does nothing)
+// Tip 1: A formatted debugging message saying which
+// address created the transaction and which transaction
+// may be helpful
+// Tip 2: Remember to do error checking on different variables
+// that could be nil
+
+// some helpful functions/methods/fields:
+// let t be a transaction object
+// w.LmnlTxs.ChkTxs(...)
+// w.LmnlTxs.Add(...)
+// utils.FmtAddr(...)
+// t.NameTag()
+// w.SendTx <- ...
 func (w *Wallet) HndlBlk(b *block.Block) {
 	return
 }
@@ -119,6 +138,40 @@ func (w *Wallet) HndlBlk(b *block.Block) {
 // Inputs:
 // txR *TxReq a transaction request from the node
 // TODO
+// 1. Try and find enough UTXO to make the transaction
+// 2. If not enough, return
+// 3. Make the transaction inputs for the transaction
+// from the UTXO
+// 4. Make the transaction outputs based on who you
+// send money to and if there is change leftover for
+// yourself
+// 5. Add the transaction to liminal transactions
+// 6. Send the transaction to the node to be broadcast
+// Tip 1: A formatted debugging message saying which
+// address created the transaction and which transaction
+// may be helpful
+// Tip 2: Remember to do error checking on different variables
+// that could be nil
+// Tip 3: proto.Transaction is used in the networking code.
+// tx.Transaction is used elsewhere. To make a tx.Transaction,
+// first make a proto.Transaction and then deserialize it to a
+// tx.Transaction
+// Tip 4: Remember to account for fees properly!
+
+// some helpful functions/methods/fields:
+// let t be a transaction object
+// w.Id.GetPublicKeyBytes()
+// hex.EncodeToString(...)
+// w.Chain.GetUTXOForAmt(...)
+// proto.NewTx(...)
+// tx.Deserialize(...)
+// w.LmnlTxs.Add(...)
+// w.SendTx <- ...
+// utils.FmtAddr(...)
+// t.NameTag()
+// t.UTXO.MkSig(...)
+// proto.NewTxInpt(...)
+// proto.NewTxOutpt(...)
 func (w *Wallet) HndlTxReq(txR *TxReq) {
 	return
 }

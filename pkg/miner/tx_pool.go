@@ -66,8 +66,17 @@ func (tp *TxPool) PriMet() bool {
 // CalcPri (CalculatePriority) calculates the
 // priority of a transaction by dividing the
 // fees (inputs - outputs) by the size of the
-// transaction.
+// transaction and multiplying by a factor of 100.
+// fees * factor / sz
 // TODO
+// 1. Calculate priority using above formula
+// 2. If priority is 0, return 1
+// Tip 1: Remember to do error checking on
+// variables that might be nil
+
+// some functions/fields/methods that might be helpful
+// let t be a transaction object
+// t.Sz()
 func CalcPri(t *tx.Transaction) uint32 {
 	return 0
 }
@@ -80,6 +89,19 @@ func CalcPri(t *tx.Transaction) uint32 {
 // incremented, and the transaction is added to the
 // heap.
 // TODO
+// 1. Don't add if capacity is reached
+// 2. Add the transaction to the queue with
+// the correct priority
+// Tip 1: Remember this method is mutating state
+// that multiple go routines concurrently have
+// access to
+// Tip 2: Remember to do error checking on
+// variables that might be nil
+
+// Some functions/methods/fields that might be
+// helpful
+// tp.mutex.Lock()
+// tp.mutex.Unlock()
 func (tp *TxPool) Add(t *tx.Transaction) {
 	return
 }
@@ -88,6 +110,19 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 // ChkTxs (CheckTransactions) checks for any duplicate
 // transactions in the heap and removes them.
 // TODO
+// 1. Remove duplicate transactions
+// 2. update count and total priority fields
+// Tip 1: Remember this method is mutating state
+// that multiple go routines concurrently have
+// access to
+// Tip 2: Remember to do error checking on
+// variables that might be nil
+
+// Some functions/methods/fields that might be
+// helpful
+// tp.mutex.Lock()
+// tp.mutex.Unlock()
+// tp.TxQ.Rmv(...)
 func (tp *TxPool) ChkTxs(remover []*tx.Transaction) {
 	return
 }

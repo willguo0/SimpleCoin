@@ -56,6 +56,19 @@ func NewLmnlTxs(c *Config) *LiminalTxs {
 //[]*tx.Transaction transactions from the new block that are already
 //in LiminalTxs, so removed from LiminalTxs bc duplicates
 // TODO
+// 1. Remove duplicates
+// 2. Increment all priorites
+// 3. Remove transactions above a certain priority threshold
+// Tip 1: Remember that this method will be
+// mutating the LiminalTxs struct along with
+// other go routines.
+
+// some helpful functions/methods/fields:
+// l.mutex.Lock()
+// l.mutex.Unlock()
+// l.TxQ.Rmv(...)
+// l.TxQ.IncAll()
+// l.TxQ.RemAbv(...)
 func (l *LiminalTxs) ChkTxs(txs []*tx.Transaction) ([]*tx.Transaction, []*tx.Transaction) {
 	return nil, nil
 }
@@ -68,6 +81,14 @@ func (l *LiminalTxs) ChkTxs(txs []*tx.Transaction) ([]*tx.Transaction, []*tx.Tra
 // Inputs:
 // t *tx.Transaction the transaction to be added
 // TODO
+// Tip 1: Remember that this method will be
+// mutating the LiminalTxs struct along with
+// other go routines.
+
+// some helpful functions/methods/fields:
+// l.mutex.Lock()
+// l.mutex.Unlock()
+// l.TxQ.Add(...)
 func (l *LiminalTxs) Add(t *tx.Transaction) {
 	return
 }

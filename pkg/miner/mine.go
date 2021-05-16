@@ -82,6 +82,28 @@ func (m *Miner) DifTrg() string {
 // the coinbase transaction that pays the miner the reward
 // for mining the block
 // TODO
+// 1. calculate how many fees you can collect
+// 2. calculate the minting reward
+// for the minting reward: it starts as c.InitSubsdy
+// and gets cut in half every c.SubsdyHlvRt until
+// c.MxHlvgs
+// 3. Then a transaction is made with zero inputs
+// and with an output paying the miner fees + mint
+
+// some functions/fields/methods that might be helpful
+// tx.Deserialize(...)
+// proto.NewTx(...)
+// m.Conf.Ver
+// m.Id.GetPublicKeyBytes()
+// proto.NewTxOutpt(...)
+// hex.EncodeToString(...)
+// m.Conf.DefLckTm
+// m.ChnLen.Load()
+// c.SubsdyHlvRt
+// c.MxHlvgs
+// c.InitSubsdy
+// t.SumInputs()
+// t.SumOutputs()
 func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
 	return nil
 }

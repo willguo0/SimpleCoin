@@ -77,6 +77,24 @@ func (bc *Blockchain) SetAddr(a string) {
 // Inputs:
 // b *block.Block the block to be added
 // TODO
+// 1. Find previous node (that this block is being appended
+// to)
+// 2. From the previous node's utxo, remove any used utxo
+// and add the new utxo from the new block
+// 3. Craft a new blockchain node and put it in the correct
+// spot
+// Tip 1: Remember that this function mutates state
+// concurrently with other go routines
+// Tip 2: It might be helpful to add a debug message
+// after the block is successfully added
+
+// some functions/fields/methods that might be helpful
+// let b be a bloc object
+// bc.Lock()
+// bc.Unlock()
+// utils.FmtAddr(...)
+// b.NameTag()
+// txo.MkTXOLoc(...)
 func (bc *Blockchain) Add(b *block.Block) {
 	return
 }
@@ -289,6 +307,16 @@ type UTXOInfo struct {
 // bool True if there is enough utxo for the amt,
 // false otherwise.
 // TODO
+// 1. Find the utxo on the last block of the main chain.
+// 2. For the utxo payable to the passed in pubkey, try
+// and get enough for the inputted amount
+// Tip 1: Remember that this method accesses state
+// concurrently to other go routines mutating it
+
+// some functions/fields/methods that might be helpful
+// txo.PrsTXOLoc(...)
+// bc.Lock()
+// bc.Unlock()
 func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uint32, bool) {
 	return nil, 0, false
 }

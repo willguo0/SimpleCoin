@@ -88,6 +88,16 @@ func (m *Miner) StartMiner() {
 // Inputs:
 // b - a new block that is being added to the blockchain.
 // TODO
+// 1. update hash
+// 2. update chain length
+// 3. update transaction pool (remove duplicates)
+// 4. if mining go routine active, send update
+
+// Some functions/methods/fields that might be helpful:
+// m.SetHash(...)
+// m.IncChnLen()
+// m.TxP.ChkTxs(...)
+// m.PoolUpdated <- ...
 func (m *Miner) HndlBlk(b *block.Block) {
 	return
 }
@@ -98,6 +108,14 @@ func (m *Miner) HndlBlk(b *block.Block) {
 // Inputs:
 // t *tx.Transaction the validated transaction that was received from the network
 // TODO
+// 1. Adds the transaction to the transaction pool
+// 2. If active, sends an update to the mining go routine
+// Tip 1: Remember to do error checking on variables that
+// could be nil
+
+// Some functions/methods/fields that might be helpful:
+// m.TxP.Add(...)
+// m.PoolUpdated <- ...
 func (m *Miner) HndlTx(t *tx.Transaction) {
 	return
 }
