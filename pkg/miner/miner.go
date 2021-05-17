@@ -94,7 +94,7 @@ func (m *Miner) StartMiner() {
 // Some functions/methods/fields that might be helpful:
 // m.SetHash(...)
 // m.IncChnLen()
-
+// m.HndlChkBlk(...)
 func (m *Miner) HndlBlk(b *block.Block) {
 	return
 }
