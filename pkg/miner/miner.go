@@ -90,17 +90,29 @@ func (m *Miner) StartMiner() {
 // TODO
 // 1. update hash
 // 2. update chain length
-// 3. update transaction pool (remove duplicates)
-// 4. if mining go routine active, send update
 
 // Some functions/methods/fields that might be helpful:
 // m.SetHash(...)
 // m.IncChnLen()
-// m.TxP.ChkTxs(...)
-// m.PoolUpdated <- ...
+
 func (m *Miner) HndlBlk(b *block.Block) {
 	return
 }
+
+// HndlChkBlk (HandleCheckBlock) handles updating
+// the transaction pool and the orphan pool based
+// on the new transactions in the block.
+// TODO
+// 1. update transaction pool (remove duplicates)
+// 2. if mining go routine active, send update
+
+// Some functions/methods/fields that might be helpful:
+// m.TxP.ChkTxs(...)
+// m.PoolUpdated <- ...
+func (m *Miner) HndlChkBlk(b *block.Block) {
+
+}
+
 
 // HndlTx (HandleTransaction) handles a validated transaction from the network. If the transaction is not an orphan, it
 // is added to the transaction pool. If the miner isn't currently mining and the priority threshold is met, then the
