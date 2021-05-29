@@ -78,9 +78,17 @@ func (tp *TxPool) PriMet() bool {
 // let t be a transaction object
 // t.Sz()
 func CalcPri(t *tx.Transaction) uint32 {
-	return 0
+	if t == nil{
+		return 0
+	}
+	priority := t.SumInputs() - t.SumOutputs()
+	priority/=t.Sz()
+	priority*=100
+	if priority == 0{
+		return 1
+	}
+	return priority
 }
-
 
 // Add adds a transaction to the transaction pool.
 // If the transaction pool is full, the transaction
@@ -103,6 +111,10 @@ func CalcPri(t *tx.Transaction) uint32 {
 // tp.mutex.Lock()
 // tp.mutex.Unlock()
 func (tp *TxPool) Add(t *tx.Transaction) {
+	if tp.Length()>=tp.Cap || t==nil{
+		return
+	}
+
 	return
 }
 
@@ -124,5 +136,11 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 // tp.mutex.Unlock()
 // tp.TxQ.Rmv(...)
 func (tp *TxPool) ChkTxs(remover []*tx.Transaction) {
+	tp.mutex.Lock()
+	//visited := make([]*tx.Transaction, 0)
+	//for (*tx.Transaction p : remover){
+	//
+	//}
+	tp.mutex.Unlock()
 	return
 }
