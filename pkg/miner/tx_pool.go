@@ -82,8 +82,8 @@ func CalcPri(t *tx.Transaction) uint32 {
 		return 0
 	}
 	priority := t.SumInputs() - t.SumOutputs()
-	priority/=t.Sz()
 	priority*=100
+	priority/=t.Sz()
 	if priority == 0{
 		return 1
 	}
@@ -111,10 +111,15 @@ func CalcPri(t *tx.Transaction) uint32 {
 // tp.mutex.Lock()
 // tp.mutex.Unlock()
 func (tp *TxPool) Add(t *tx.Transaction) {
-	if tp.Length()>=tp.Cap || t==nil{
+	if tp == nil || tp.Length()>=tp.Cap || t==nil{
 		return
 	}
-
+	prio := CalcPri(t)
+	tp.mutex.Lock()
+	tp.TxQ.Add(prio, t)
+	tp.Ct.Add(1)
+	tp.CurPri.Add(prio)
+	tp.mutex.Unlock()
 	return
 }
 
@@ -136,11 +141,15 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 // tp.mutex.Unlock()
 // tp.TxQ.Rmv(...)
 func (tp *TxPool) ChkTxs(remover []*tx.Transaction) {
+	if tp ==nil || remover == nil{
+		return
+	}
 	tp.mutex.Lock()
-	//visited := make([]*tx.Transaction, 0)
-	//for (*tx.Transaction p : remover){
-	//
-	//}
+	removed := tp.TxQ.Rmv(remover)
+	for _, t := range removed{
+		tp.Ct.Sub(1)
+		tp.CurPri.Sub(CalcPri(t))
+	}
 	tp.mutex.Unlock()
-	return
+
 }
