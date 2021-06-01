@@ -96,7 +96,12 @@ func (m *Miner) StartMiner() {
 // m.IncChnLen()
 // m.HndlChkBlk(...)
 func (m *Miner) HndlBlk(b *block.Block) {
-	return
+	if m == nil || b == nil{
+		return
+	}
+	m.SetHash(b.Hash())
+	m.IncChnLen()
+	m.HndlChkBlk(b)
 }
 
 // HndlChkBlk (HandleCheckBlock) handles updating
@@ -110,7 +115,13 @@ func (m *Miner) HndlBlk(b *block.Block) {
 // m.TxP.ChkTxs(...)
 // m.PoolUpdated <- ...
 func (m *Miner) HndlChkBlk(b *block.Block) {
-
+	if m == nil || b == nil{
+		return
+	}
+	m.TxP.ChkTxs(b.Transactions)
+	if m.Active.Load(){
+		m.PoolUpdated <-true
+	}
 }
 
 
@@ -129,7 +140,13 @@ func (m *Miner) HndlChkBlk(b *block.Block) {
 // m.TxP.Add(...)
 // m.PoolUpdated <- ...
 func (m *Miner) HndlTx(t *tx.Transaction) {
-	return
+	if m==nil || t== nil{
+		return
+	}
+	m.TxP.Add(t)
+	if m.Active.Load(){
+		m.PoolUpdated <-true
+	}
 }
 
 // SetChnLen (SetChainLength) sets the miner's perspective of the length of the main chain.

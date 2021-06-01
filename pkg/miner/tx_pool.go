@@ -120,7 +120,7 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 	tp.Ct.Add(1)
 	tp.CurPri.Add(prio)
 	tp.mutex.Unlock()
-	return
+
 }
 
 
