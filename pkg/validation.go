@@ -12,7 +12,6 @@ import (
  *
  */
 
-
 // ChkBlk (CheckBlock) validates a block based on multiple
 // conditions.
 // To be valid:
@@ -48,9 +47,12 @@ import (
 // b.Sz()
 // n.Chain.ChkChainsUTXO(...)
 func (n *Node) ChkBlk(b *block.Block) bool {
-	return false
-}
+	if n == nil || b == nil || len(b.Transactions) == 0 {
+		return false
+	}
 
+	return n.Chain.ChkChainsUTXO(b.Transactions, b.Hdr.PrvBlkHsh) && b.Sz() <= n.Conf.MxBlkSz && b.SatisfiesPOW(b.Hdr.DiffTarg) && b.Transactions[0].IsCoinbase()
+}
 
 // ChkTx (CheckTransaction) validates a transaction.
 // Inputs:
@@ -84,5 +86,21 @@ func (n *Node) ChkBlk(b *block.Block) bool {
 // t.SumInputs()
 // t.SumOutputs()
 func (n *Node) ChkTx(t *tx.Transaction) bool {
-	return false
+	if n == nil || t == nil || len(t.Inputs) == 0 || len(t.Outputs) == 0 {
+		return false
+	}
+
+	for _, v := range t.Inputs {
+		if n.Chain.IsInvalidInput(v) || !n.Chain.GetUTXO(v).IsUnlckd(v.UnlockingScript) {
+			return false
+		}
+	}
+
+	for _, v := range t.Outputs {
+		if v.Amount <= 0 {
+			return false
+		}
+	}
+
+	return t.SumInputs() >= t.SumOutputs() && t.Sz() <= n.Conf.MxBlkSz // check with TAs about whether it should be greater / greater or equal (for sum inputs/outputs)
 }

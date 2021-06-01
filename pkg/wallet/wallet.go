@@ -5,6 +5,8 @@ import (
 	"BrunoCoin/pkg/block/tx"
 	"BrunoCoin/pkg/blockchain"
 	"BrunoCoin/pkg/id"
+	"BrunoCoin/pkg/utils"
+	"fmt"
 	"sync"
 )
 
@@ -58,7 +60,6 @@ type Wallet struct {
 	mutex sync.Mutex
 }
 
-
 // SetAddr (SetAddress) sets the address
 // of the node in the wallet.
 func (w *Wallet) SetAddr(a string) {
@@ -66,7 +67,6 @@ func (w *Wallet) SetAddr(a string) {
 	w.Addr = a
 	w.mutex.Unlock()
 }
-
 
 // New creates a wallet object.
 // Inputs:
@@ -122,7 +122,23 @@ func New(c *Config, id id.ID, chain *blockchain.Blockchain) *Wallet {
 // t.NameTag()
 // w.SendTx <- ...
 func (w *Wallet) HndlBlk(b *block.Block) {
-	return
+	if w == nil || b == nil || b.Transactions == nil {
+		return
+	}
+
+	threshPriorityTxs, _ := w.LmnlTxs.ChkTxs(b.Transactions)
+
+	if threshPriorityTxs == nil {
+		return
+	}
+
+	for _, v := range threshPriorityTxs {
+		v.LockTime++
+		w.LmnlTxs.Add(v)
+		w.SendTx <- v
+
+		fmt.Println(fmt.Sprint("Address "), w.Addr, fmt.Sprint("created transaction "), utils.FmtAddr(v.NameTag()))
+	}
 }
 
 // HndlTxReq (HandleTransactionRequest) attempts to
