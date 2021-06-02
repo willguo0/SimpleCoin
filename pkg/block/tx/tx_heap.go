@@ -16,10 +16,9 @@ import (
 // P	uint32	the priority of the transaction.
 // T	*Transaction	pointer to a transaction.
 type HeapNode struct {
-	P    	uint32
-	T 		*Transaction
+	P uint32
+	T *Transaction
 }
-
 
 // TxHeap (TransactionHeap) represents a
 // heap or priority queue for storing transactions.
@@ -27,7 +26,6 @@ type HeapNode struct {
 // *TxHeapNodes since the heap is implemented
 // using an array.
 type Heap []*HeapNode
-
 
 // NewTxHeap (NewTransactionHeap) creates
 // a new empty transaction heap.
@@ -38,7 +36,6 @@ func NewTxHeap() *Heap {
 	heap.Init(&queue)
 	return &queue
 }
-
 
 // Add adds a transaction with a particular
 // priority to the transaction heap.
@@ -55,7 +52,6 @@ func (h *Heap) Add(p uint32, t *Transaction) {
 	heap.Push(h, n)
 }
 
-
 // IncAll (IncrementAll) increments
 // the priority of every transaction
 // stored within the heap.
@@ -65,7 +61,6 @@ func (h *Heap) IncAll() {
 	}
 }
 
-
 // Len (Length) returns the length
 // of the heap. This method is required
 // by the heap interface.
@@ -74,7 +69,6 @@ func (h *Heap) IncAll() {
 func (h Heap) Len() int {
 	return len(h)
 }
-
 
 // Less returns whether or not one
 // transaction is greater than another.
@@ -91,7 +85,6 @@ func (h Heap) Less(i, j int) bool {
 	return h[i].P > h[j].P
 }
 
-
 // Swap swaps two transactions in the
 // heap. This method is required by the
 // heap interface.
@@ -102,14 +95,12 @@ func (h Heap) Swap(i, j int) {
 	h[i], h[j] = h[j], h[i]
 }
 
-
 // Push adds an element to the heap.
 // This method is required by the
 // heap interface.
 func (h *Heap) Push(x interface{}) {
 	*h = append(*h, x.(*HeapNode))
 }
-
 
 // Pop removes the top element of the heap.
 // This method is required by the
@@ -122,7 +113,6 @@ func (h *Heap) Pop() interface{} {
 	return x
 }
 
-
 // Peek returns the top element of the heap.
 // This method is required by the
 // heap interface.
@@ -132,7 +122,6 @@ func (h *Heap) Peek() interface{} {
 	x := old[n-1]
 	return x
 }
-
 
 // Rmv (Remove) removes any transactions stored
 // in the heap that are also in the inputted
@@ -163,7 +152,6 @@ func (h *Heap) Rmv(ts []*Transaction) []*Transaction {
 	return r
 }
 
-
 // GetIndex gets the index into the heap of a
 // particular transaction.
 // Inputs:
@@ -187,7 +175,6 @@ func (h *Heap) GetIndex(t *Transaction) (int, bool) {
 	return 0, false
 }
 
-
 // Has returns true if the inputted
 // transaction is in the heap.
 // Inputs:
@@ -203,13 +190,12 @@ func (h *Heap) Has(t *Transaction) bool {
 		return false
 	}
 	for _, tx := range *h {
-		if tx.T.Hash() == t.Hash(){
+		if tx.T.Hash() == t.Hash() {
 			return true
 		}
 	}
 	return false
 }
-
 
 // RemAbv (RemoveAbove) removes all transactions
 // in the heap that are above a certain priority.
@@ -222,7 +208,7 @@ func (h *Heap) Has(t *Transaction) bool {
 // removed.
 func (h *Heap) RemAbv(thresh uint32) []*Transaction {
 	var rem []*Transaction
-	for i := 0; i < h.Len() - 1; i++ {
+	for i := 0; i < h.Len(); i++ {
 		val := (*h)[i]
 		if val.P >= thresh {
 			rem = append(rem, val.T)
