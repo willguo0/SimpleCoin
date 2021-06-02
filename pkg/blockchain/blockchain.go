@@ -96,17 +96,29 @@ func (bc *Blockchain) SetAddr(a string) {
 // b.NameTag()
 // txo.MkTXOLoc(...)
 func (bc *Blockchain) Add(b *block.Block) {
-	if bc == nil || b == nil {
-		return
-	}
-	//lastBlockNode := bc.LastBlock
-	//for _, t := range lastBlockNode.utxo {
-	//
-	//}
 	bc.Lock()
-	defer bc.Unlock()
 
-	return
+	/*for _, bTx := range b.Transactions {
+		for _, txo := range bTx.Outputs {
+			usedKeys := make([]string, 0)
+
+			for key, utxo := range bc.LastBlock.utxo {
+				if txo == utxo {
+					usedKeys = append(usedKeys, key)
+				}
+			}
+
+			for key := range bc.LastBlock.utxo {
+				delete(bc.LastBlock.utxo, key)
+			}
+		}
+	}
+
+	for _, bTx := range b.Transactions {
+
+	}*/
+
+	bc.Unlock()
 }
 
 // Length returns the count of blocks on the
