@@ -137,7 +137,7 @@ func (w *Wallet) HndlBlk(b *block.Block) {
 		w.LmnlTxs.Add(v)
 		w.SendTx <- v
 
-		fmt.Println(fmt.Sprint("Address "), w.Addr, fmt.Sprint("created transaction "), utils.FmtAddr(v.NameTag()))
+		fmt.Println(fmt.Sprint("Address "), w.Addr, fmt.Sprint(" created transaction "), utils.FmtAddr(v.NameTag()))
 	}
 }
 

@@ -51,7 +51,14 @@ func (n *Node) ChkBlk(b *block.Block) bool {
 		return false
 	}
 
-	return n.Chain.ChkChainsUTXO(b.Transactions, b.Hdr.PrvBlkHsh) && b.Sz() <= n.Conf.MxBlkSz && b.SatisfiesPOW(b.Hdr.DiffTarg) && b.Transactions[0].IsCoinbase()
+	for i, v := range b.Transactions {
+		if (i == 0) == v.IsCoinbase() || !n.ChkTx(v) {
+			return false
+		}
+
+	}
+
+	return n.Chain.ChkChainsUTXO(b.Transactions, b.Hdr.PrvBlkHsh) && b.Sz() <= n.Conf.MxBlkSz && b.SatisfiesPOW(b.Hdr.DiffTarg)
 }
 
 // ChkTx (CheckTransaction) validates a transaction.
