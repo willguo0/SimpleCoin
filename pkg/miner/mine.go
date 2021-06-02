@@ -107,6 +107,10 @@ func (m *Miner) DifTrg() string {
 // t.SumInputs()
 // t.SumOutputs()
 func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
+	if m == nil || txs == nil || len(txs) == 0 {
+		return nil
+	}
+
 	c := m.Conf
 
 	hlvgs := m.ChnLen.Load() / c.SubsdyHlvRt
@@ -120,7 +124,9 @@ func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
 	var totlFee uint32 = 0
 
 	for _, v := range txs {
-		totlFee += v.SumInputs() - v.SumOutputs()
+		if v != nil {
+			totlFee += v.SumInputs() - v.SumOutputs()
+		}
 	}
 
 	txiList := make([]*proto.TransactionInput, 0)
