@@ -109,7 +109,6 @@ func (bc *Blockchain) Length() int {
 	return bc.LastBlock.depth + 1
 }
 
-
 // Get returns the blocks that corresponds to a
 // particular inputted hash
 // Inputs:
@@ -139,7 +138,6 @@ func (bc *Blockchain) IndexOf(hash string) int {
 	return bc.blocks[hash].depth
 }
 
-
 // GetLastBlock is a getter for LastBlock
 // Returns:
 // *block.Block the last block of the main chain.
@@ -148,7 +146,6 @@ func (bc *Blockchain) GetLastBlock() *block.Block {
 	defer bc.Unlock()
 	return bc.LastBlock.Block
 }
-
 
 // List returns all blocks on the main chain in order.
 // Returns:
@@ -164,7 +161,6 @@ func (bc *Blockchain) List() []*block.Block {
 	}
 	return slice
 }
-
 
 // Slice returns a slice of the main chain from a certain
 // starting index to an ending index (exclusive).
@@ -191,7 +187,6 @@ func (bc *Blockchain) Slice(s int, e int) []*block.Block {
 	return slice
 }
 
-
 // IsEndMainChain checks whether a new block would
 // be appended to the end of the current chain.
 // Inputs:
@@ -204,8 +199,6 @@ func (bc *Blockchain) IsEndMainChain(blk *block.Block) bool {
 	return bc.LastBlock.Block.Hash() == blk.Hdr.PrvBlkHsh
 }
 
-
-
 func (bc *Blockchain) GetUTXO(txi *txi.TransactionInput) *txo.TransactionOutput {
 	bc.Lock()
 	defer bc.Unlock()
@@ -213,8 +206,6 @@ func (bc *Blockchain) GetUTXO(txi *txi.TransactionInput) *txo.TransactionOutput 
 	utxo, _ := bc.LastBlock.utxo[key]
 	return utxo
 }
-
-
 
 func (bc *Blockchain) GetUTXOLen(pk string) int {
 	bc.Lock()
@@ -318,6 +309,25 @@ type UTXOInfo struct {
 // bc.Lock()
 // bc.Unlock()
 func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uint32, bool) {
+	bc.Lock()
+	defer bc.Unlock()
+
+	var bal uint32 = 0
+
+	utxoInfoList := make([]*UTXOInfo, 0)
+
+	for k, v := range bc.LastBlock.utxo {
+		if v.LockingScript == pubKey {
+			bal += v.Amount
+			txHsh, outIdx := txo.PrsTXOLoc(k)
+			utxoInfoList = append(utxoInfoList, &UTXOInfo{txHsh, outIdx, v, v.Amount})
+
+			if bal >= amt {
+				return utxoInfoList, bal - amt, true
+			}
+		}
+	}
+
 	return nil, 0, false
 }
 
