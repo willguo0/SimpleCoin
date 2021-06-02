@@ -219,7 +219,7 @@ func (w *Wallet) HndlTxReq(txR *TxReq) {
 		txoList = append(txoList, proto.NewTxOutpt(txR.Fee, hex.EncodeToString(w.Id.GetPublicKeyBytes())))
 	}
 
-	tx := tx.Deserialize(proto.NewTx(0, txiList, txoList, 0))
+	tx := tx.Deserialize(proto.NewTx(w.Conf.TxVer, txiList, txoList, w.Conf.DefLckTm))
 
 	w.LmnlTxs.Add(tx)
 	w.SendTx <- tx

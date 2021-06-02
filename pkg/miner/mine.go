@@ -3,8 +3,10 @@ package miner
 import (
 	"BrunoCoin/pkg/block"
 	"BrunoCoin/pkg/block/tx"
+	"BrunoCoin/pkg/proto"
 	"BrunoCoin/pkg/utils"
 	"context"
+	"encoding/hex"
 )
 
 /*
@@ -105,7 +107,25 @@ func (m *Miner) DifTrg() string {
 // t.SumInputs()
 // t.SumOutputs()
 func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
+	c := m.Conf
 
-	return nil
+	hlvgs := m.ChnLen.Load() / c.SubsdyHlvRt
+
+	if hlvgs > c.MxHlvgs {
+		hlvgs = c.MxHlvgs
+	}
+
+	mntRwd := c.InitSubsdy >> hlvgs
+
+	var totlFee uint32 = 0
+
+	for _, v := range txs {
+		totlFee += v.SumInputs() - v.SumOutputs()
+	}
+
+	txiList := make([]*proto.TransactionInput, 0)
+
+	txoList := []*proto.TransactionOutput{proto.NewTxOutpt(mntRwd+totlFee, hex.EncodeToString(m.Id.GetPublicKeyBytes()))}
+
+	return tx.Deserialize(proto.NewTx(c.Ver, txiList, txoList, c.DefLckTm))
 }
-
