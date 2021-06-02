@@ -124,9 +124,11 @@ func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
 	var totlFee uint32 = 0
 
 	for _, v := range txs {
-		if v != nil {
-			totlFee += v.SumInputs() - v.SumOutputs()
+		if v == nil {
+			return nil
 		}
+
+		totlFee += v.SumInputs() - v.SumOutputs()
 	}
 
 	txiList := make([]*proto.TransactionInput, 0)
