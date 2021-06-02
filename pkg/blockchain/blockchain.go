@@ -309,6 +309,10 @@ type UTXOInfo struct {
 // bc.Lock()
 // bc.Unlock()
 func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uint32, bool) {
+	if bc == nil || amt <= 0 {
+		return nil, 0, false
+	}
+
 	bc.Lock()
 	defer bc.Unlock()
 
