@@ -191,7 +191,7 @@ func (w *Wallet) HndlBlk(b *block.Block) {
 // proto.NewTxInpt(...)
 // proto.NewTxOutpt(...)
 func (w *Wallet) HndlTxReq(txR *TxReq) {
-	if w == nil || txR == nil {
+	if w == nil || txR == nil || txR.Amt <= 0 {
 		return
 	}
 
