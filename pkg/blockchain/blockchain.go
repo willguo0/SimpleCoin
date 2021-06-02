@@ -98,25 +98,30 @@ func (bc *Blockchain) SetAddr(a string) {
 func (bc *Blockchain) Add(b *block.Block) {
 	bc.Lock()
 
-	/*for _, bTx := range b.Transactions {
-		for _, txo := range bTx.Outputs {
-			usedKeys := make([]string, 0)
+	newUTXO := make(map[string]*txo.TransactionOutput)
 
-			for key, utxo := range bc.LastBlock.utxo {
-				if txo == utxo {
+	for _, bTx := range b.Transactions {
+		for _, bTxi := range bTx.Inputs {
+			usedKeys := make([]string, 0)
+			bTxiPrevTxoLoc := txo.MkTXOLoc(bTxi.TransactionHash, bTxi.OutputIndex)
+
+			for key := range bc.LastBlock.utxo {
+				if bTxiPrevTxoLoc == key {
 					usedKeys = append(usedKeys, key)
 				}
 			}
 
-			for key := range bc.LastBlock.utxo {
+			for _, key := range usedKeys {
 				delete(bc.LastBlock.utxo, key)
 			}
 		}
+
+		//add new utxo
 	}
 
-	for _, bTx := range b.Transactions {
-
-	}*/
+	b.Hdr.PrvBlkHsh = bc.LastBlock.Hash()
+	bc.blocks[b.Hdr.PrvBlkHsh] = bc.LastBlock
+	bc.LastBlock = &BlockchainNode{b, bc.LastBlock, newUTXO, bc.LastBlock.depth + 1}
 
 	bc.Unlock()
 }
