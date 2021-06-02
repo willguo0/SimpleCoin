@@ -96,8 +96,16 @@ func (bc *Blockchain) SetAddr(a string) {
 // b.NameTag()
 // txo.MkTXOLoc(...)
 func (bc *Blockchain) Add(b *block.Block) {
+	if bc == nil || b == nil {
+		return
+	}
+	//lastBlockNode := bc.LastBlock
+	//for _, t := range lastBlockNode.utxo {
+	//
+	//}
 	bc.Lock()
 	defer bc.Unlock()
+
 	return
 }
 
