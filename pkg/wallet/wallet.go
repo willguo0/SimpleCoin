@@ -5,7 +5,9 @@ import (
 	"BrunoCoin/pkg/block/tx"
 	"BrunoCoin/pkg/blockchain"
 	"BrunoCoin/pkg/id"
+	"BrunoCoin/pkg/proto"
 	"BrunoCoin/pkg/utils"
+	"encoding/hex"
 	"fmt"
 	"sync"
 )
@@ -189,5 +191,36 @@ func (w *Wallet) HndlBlk(b *block.Block) {
 // proto.NewTxInpt(...)
 // proto.NewTxOutpt(...)
 func (w *Wallet) HndlTxReq(txR *TxReq) {
-	return
+	if w == nil || txR == nil {
+		return
+	}
+
+	utxoList, change, ok := w.Chain.GetUTXOForAmt(txR.Amt+txR.Fee, hex.EncodeToString(w.Id.GetPublicKeyBytes()))
+
+	if !ok {
+		return
+	}
+
+	txiList := make([]*proto.TransactionInput, 0)
+
+	for _, v := range utxoList {
+		sig, err := v.UTXO.MkSig(w.Id)
+
+		if err != nil {
+			return
+		}
+
+		txiList = append(txiList, proto.NewTxInpt(v.TxHsh, v.OutIdx, sig, v.Amt))
+	}
+
+	txoList := []*proto.TransactionOutput{proto.NewTxOutpt(txR.Amt, hex.EncodeToString(txR.PubK))}
+
+	if change > 0 {
+		txoList = append(txoList, proto.NewTxOutpt(txR.Fee, hex.EncodeToString(w.Id.GetPublicKeyBytes())))
+	}
+
+	tx := tx.Deserialize(proto.NewTx(0, txiList, txoList, 0))
+
+	w.LmnlTxs.Add(tx)
+	w.SendTx <- tx
 }
