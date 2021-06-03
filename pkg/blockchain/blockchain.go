@@ -103,19 +103,20 @@ func (bc *Blockchain) Add(b *block.Block) {
 	bc.Lock()
 
 	newUTXO := make(map[string]*txo.TransactionOutput)
+	oldUTXO := bc.LastBlock.utxo
 
 	for _, bTx := range b.Transactions {
 		for _, bTxi := range bTx.Inputs {
 			usedKeys := make([]string, 0)
 
-			for key, utxo := range bc.LastBlock.utxo {
-				if utxo.IsUnlckd(bTxi.UnlockingScript) {
+			for key := range oldUTXO {
+				if key == txo.MkTXOLoc(bTxi.TransactionHash, bTxi.OutputIndex) {
 					usedKeys = append(usedKeys, key)
 				}
 			}
 
 			for _, key := range usedKeys {
-				delete(bc.LastBlock.utxo, key)
+				delete(oldUTXO, key)
 			}
 		}
 
@@ -124,7 +125,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 		}
 	}
 
-	for key, utxo := range bc.LastBlock.utxo {
+	for key, utxo := range oldUTXO {
 		newUTXO[key] = utxo
 	}
 
