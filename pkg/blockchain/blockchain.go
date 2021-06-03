@@ -96,6 +96,10 @@ func (bc *Blockchain) SetAddr(a string) {
 // b.NameTag()
 // txo.MkTXOLoc(...)
 func (bc *Blockchain) Add(b *block.Block) {
+	if bc == nil || b == nil {
+		return
+	}
+
 	bc.Lock()
 
 	newUTXO := make(map[string]*txo.TransactionOutput)
@@ -118,6 +122,10 @@ func (bc *Blockchain) Add(b *block.Block) {
 		for i, bTxo := range bTx.Outputs {
 			newUTXO[txo.MkTXOLoc(bTx.Hash(), uint32(i))] = bTxo
 		}
+	}
+
+	for key, utxo := range bc.LastBlock.utxo {
+		newUTXO[key] = utxo
 	}
 
 	b.Hdr.PrvBlkHsh = bc.LastBlock.Hash()
