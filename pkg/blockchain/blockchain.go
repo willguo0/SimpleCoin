@@ -96,11 +96,12 @@ func (bc *Blockchain) SetAddr(a string) {
 // b.NameTag()
 // txo.MkTXOLoc(...)
 func (bc *Blockchain) Add(b *block.Block) {
-	if bc == nil || b == nil {
+	bc.Lock()
+	defer bc.Unlock()
+
+	if bc == nil || b == nil || bc.LastBlock == nil {
 		return
 	}
-
-	bc.Lock()
 
 	newUTXO := make(map[string]*txo.TransactionOutput)
 	oldUTXO := bc.LastBlock.utxo
@@ -132,8 +133,6 @@ func (bc *Blockchain) Add(b *block.Block) {
 	b.Hdr.PrvBlkHsh = bc.LastBlock.Hash()
 	bc.blocks[b.Hdr.PrvBlkHsh] = bc.LastBlock
 	bc.LastBlock = &BlockchainNode{b, bc.LastBlock, newUTXO, bc.LastBlock.depth + 1}
-
-	bc.Unlock()
 }
 
 // Length returns the count of blocks on the
