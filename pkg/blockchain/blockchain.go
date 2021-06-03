@@ -116,7 +116,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 		}
 	}
 
-	for key, utxo := range bc.LastBlock.utxo {
+	for key, utxo := range bc.blocks[b.Hdr.PrvBlkHsh].utxo {
 		_, keyIsDeleted := deletedUTXO[key]
 
 		if !keyIsDeleted {
@@ -124,9 +124,8 @@ func (bc *Blockchain) Add(b *block.Block) {
 		}
 	}
 
-	b.Hdr.PrvBlkHsh = bc.LastBlock.Hash()
-	bc.blocks[b.Hdr.PrvBlkHsh] = bc.LastBlock
 	bc.LastBlock = &BlockchainNode{b, bc.LastBlock, newUTXO, bc.LastBlock.depth + 1}
+	bc.blocks[b.Hash()] = bc.LastBlock
 }
 
 // Length returns the count of blocks on the
