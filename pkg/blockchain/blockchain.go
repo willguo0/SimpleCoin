@@ -124,8 +124,13 @@ func (bc *Blockchain) Add(b *block.Block) {
 		}
 	}
 
-	bc.LastBlock = &BlockchainNode{b, bc.LastBlock, newUTXO, bc.LastBlock.depth + 1}
-	bc.blocks[b.Hash()] = bc.LastBlock
+	newBlockDepth := bc.blocks[b.Hdr.PrvBlkHsh].depth + 1
+	newBlockchainNode := &BlockchainNode{b, bc.LastBlock, newUTXO, newBlockDepth}
+	bc.blocks[b.Hash()] = newBlockchainNode
+
+	if newBlockDepth > bc.LastBlock.depth || (newBlockDepth == bc.LastBlock.depth && b.Hash() < bc.GetLastBlock().Hash()) {
+		bc.LastBlock = newBlockchainNode
+	}
 }
 
 // Length returns the count of blocks on the
