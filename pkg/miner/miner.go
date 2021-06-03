@@ -102,7 +102,7 @@ func (m *Miner) HndlBlk(b *block.Block) {
 
 	m.SetHash(b.Hash())
 	m.IncChnLen()
-	go m.HndlChkBlk(b)
+	m.HndlChkBlk(b)
 }
 
 // HndlChkBlk (HandleCheckBlock) handles updating
