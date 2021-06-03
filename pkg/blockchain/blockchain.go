@@ -103,10 +103,9 @@ func (bc *Blockchain) Add(b *block.Block) {
 	for _, bTx := range b.Transactions {
 		for _, bTxi := range bTx.Inputs {
 			usedKeys := make([]string, 0)
-			bTxiPrevTxoLoc := txo.MkTXOLoc(bTxi.TransactionHash, bTxi.OutputIndex)
 
-			for key := range bc.LastBlock.utxo {
-				if bTxiPrevTxoLoc == key {
+			for key, utxo := range bc.LastBlock.utxo {
+				if utxo.IsUnlckd(bTxi.UnlockingScript) {
 					usedKeys = append(usedKeys, key)
 				}
 			}
@@ -116,7 +115,9 @@ func (bc *Blockchain) Add(b *block.Block) {
 			}
 		}
 
-		//add new utxo
+		for i, bTxo := range bTx.Outputs {
+			newUTXO[txo.MkTXOLoc(bTx.Hash(), uint32(i))] = bTxo
+		}
 	}
 
 	b.Hdr.PrvBlkHsh = bc.LastBlock.Hash()
