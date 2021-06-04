@@ -100,7 +100,7 @@ func (m *Miner) HndlBlk(b *block.Block) {
 		return
 	}
 
-	m.SetHash(b.Hdr.PrvBlkHsh)
+	m.SetHash(b.Hash())
 	m.IncChnLen()
 	m.HndlChkBlk(b)
 }
@@ -122,7 +122,7 @@ func (m *Miner) HndlChkBlk(b *block.Block) {
 
 	m.TxP.ChkTxs(b.Transactions)
 
-	if m.Active.Load() {
+	if m.Mining.Load() {
 		m.PoolUpdated <- true
 	}
 }
@@ -148,7 +148,7 @@ func (m *Miner) HndlTx(t *tx.Transaction) {
 
 	m.TxP.Add(t)
 
-	if m.Active.Load() {
+	if m.Mining.Load() {
 		m.PoolUpdated <- true
 	}
 }
