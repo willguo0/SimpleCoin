@@ -52,8 +52,14 @@ func (n *Node) ChkBlk(b *block.Block) bool {
 	}
 
 	for i, v := range b.Transactions {
-		if ((i == 0) != v.IsCoinbase()) || !n.ChkTx(v) {
-			return false
+		if i == 0 {
+			if !v.IsCoinbase() {
+				return false
+			}
+		} else {
+			if v.IsCoinbase() || !n.ChkTx(v) {
+				return false
+			}
 		}
 	}
 
@@ -108,9 +114,5 @@ func (n *Node) ChkTx(t *tx.Transaction) bool {
 		}
 	}
 
-	if len(t.Inputs) > 0 && t.SumInputs() < t.SumOutputs() {
-		return false
-	}
-
-	return t.Sz() <= n.Conf.MxBlkSz // check with TAs about whether it should be greater / greater or equal (for sum inputs/outputs)
+	return t.SumInputs() >= t.SumOutputs() && t.Sz() <= n.Conf.MxBlkSz // check with TAs about whether it should be greater / greater or equal (for sum inputs/outputs)
 }
