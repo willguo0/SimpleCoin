@@ -122,7 +122,7 @@ func (m *Miner) HndlChkBlk(b *block.Block) {
 
 	m.TxP.ChkTxs(b.Transactions)
 
-	if m.Mining.Load() {
+	if m.Active.Load() {
 		m.PoolUpdated <- true
 	}
 }
