@@ -128,7 +128,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 	newBlockchainNode := &BlockchainNode{b, bc.blocks[b.Hdr.PrvBlkHsh], newUTXO, newBlockDepth}
 	bc.blocks[b.Hash()] = newBlockchainNode
 
-	if newBlockDepth > bc.LastBlock.depth || (newBlockDepth == bc.LastBlock.depth && b.Hash() < bc.GetLastBlock().Hash()) {
+	if newBlockDepth > bc.LastBlock.depth || (newBlockDepth == bc.LastBlock.depth && b.Hash() < bc.LastBlock.Block.Hash()) {
 		bc.LastBlock = newBlockchainNode
 	}
 }
