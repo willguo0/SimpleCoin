@@ -140,7 +140,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 func (bc *Blockchain) Length() int {
 	bc.Lock()
 	defer bc.Unlock()
-	return bc.LastBlock.depth + 1
+	return bc.LastBlock.depth
 }
 
 // Get returns the blocks that corresponds to a
