@@ -206,11 +206,9 @@ func (w *Wallet) HndlTxReq(txR *TxReq) {
 	for _, v := range utxoList {
 		sig, err := v.UTXO.MkSig(w.Id)
 
-		if err != nil {
-			return
+		if err == nil {
+			txiList = append(txiList, proto.NewTxInpt(v.TxHsh, v.OutIdx, sig, v.Amt))
 		}
-
-		txiList = append(txiList, proto.NewTxInpt(v.TxHsh, v.OutIdx, sig, v.Amt))
 	}
 
 	txoList := []*proto.TransactionOutput{proto.NewTxOutpt(txR.Amt, hex.EncodeToString(txR.PubK))}
