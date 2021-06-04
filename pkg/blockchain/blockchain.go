@@ -104,9 +104,9 @@ func (bc *Blockchain) Add(b *block.Block) {
 	}
 
 	newUTXO := make(map[string]*txo.TransactionOutput)
-	deletedUTXO := make(map[string]bool)
+	//deletedUTXO := make(map[string]bool)
 
-	for _, bTx := range b.Transactions {
+	/*for _, bTx := range b.Transactions {
 		for _, bTxi := range bTx.Inputs {
 			deletedUTXO[txo.MkTXOLoc(bTxi.TransactionHash, bTxi.OutputIndex)] = true
 		}
@@ -122,7 +122,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 		if !keyIsDeleted {
 			newUTXO[key] = utxo
 		}
-	}
+	}*/
 
 	newBlockDepth := bc.blocks[b.Hdr.PrvBlkHsh].depth + 1
 	newBlockchainNode := &BlockchainNode{b, bc.blocks[b.Hdr.PrvBlkHsh], newUTXO, newBlockDepth}
