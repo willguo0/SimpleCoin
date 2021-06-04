@@ -137,17 +137,16 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 // tp.TxQ.Rmv(...)
 func (tp *TxPool) ChkTxs(remover []*tx.Transaction) {
 	tp.mutex.Lock()
+	defer tp.mutex.Unlock()
 
 	if tp == nil || remover == nil {
 		return
 	}
 
-	tp.TxQ.Rmv(remover)
+	removed := tp.TxQ.Rmv(remover)
 
-	for _, t := range remover {
+	for _, t := range removed {
 		tp.Ct.Sub(1)
 		tp.CurPri.Sub(CalcPri(t))
 	}
-
-	tp.mutex.Unlock()
 }
