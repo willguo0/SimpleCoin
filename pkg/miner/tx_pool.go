@@ -24,15 +24,14 @@ import (
 // Cap is the maximum amount of allowed
 // transactions to store in the pool.
 type TxPool struct {
-	CurPri   	*atomic.Uint32
-	PriLim 		uint32
+	CurPri *atomic.Uint32
+	PriLim uint32
 
-	TxQ 		*tx.Heap
-	Ct			*atomic.Uint32
-	Cap         uint32
-	mutex		sync.Mutex
+	TxQ   *tx.Heap
+	Ct    *atomic.Uint32
+	Cap   uint32
+	mutex sync.Mutex
 }
-
 
 // Length returns the count of transactions
 // currently in the pool.
@@ -41,7 +40,6 @@ type TxPool struct {
 func (tp *TxPool) Length() uint32 {
 	return tp.Ct.Load()
 }
-
 
 // NewTxPool constructs a transaction pool.
 func NewTxPool(c *Config) *TxPool {
@@ -54,14 +52,12 @@ func NewTxPool(c *Config) *TxPool {
 	}
 }
 
-
 // PriMet (PriorityMet) checks to see
 // if the transaction pool has enough
 // cumulative priority to start mining.
 func (tp *TxPool) PriMet() bool {
 	return tp.CurPri.Load() >= tp.PriLim
 }
-
 
 // CalcPri (CalculatePriority) calculates the
 // priority of a transaction by dividing the
@@ -78,13 +74,13 @@ func (tp *TxPool) PriMet() bool {
 // let t be a transaction object
 // t.Sz()
 func CalcPri(t *tx.Transaction) uint32 {
-	if t == nil{
+	if t == nil {
 		return 0
 	}
 	priority := t.SumInputs() - t.SumOutputs()
-	priority*=100
-	priority/=t.Sz()
-	if priority == 0{
+	priority *= 100
+	priority /= t.Sz()
+	if priority == 0 {
 		return 1
 	}
 	return priority
@@ -111,7 +107,7 @@ func CalcPri(t *tx.Transaction) uint32 {
 // tp.mutex.Lock()
 // tp.mutex.Unlock()
 func (tp *TxPool) Add(t *tx.Transaction) {
-	if tp == nil || tp.Length()>=tp.Cap || t==nil{
+	if tp == nil || tp.Length() >= tp.Cap || t == nil {
 		return
 	}
 	prio := CalcPri(t)
@@ -122,7 +118,6 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 	tp.mutex.Unlock()
 
 }
-
 
 // ChkTxs (CheckTransactions) checks for any duplicate
 // transactions in the heap and removes them.
@@ -141,15 +136,18 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 // tp.mutex.Unlock()
 // tp.TxQ.Rmv(...)
 func (tp *TxPool) ChkTxs(remover []*tx.Transaction) {
-	if tp ==nil || remover == nil{
+	tp.mutex.Lock()
+
+	if tp == nil || remover == nil {
 		return
 	}
-	tp.mutex.Lock()
-	removed := tp.TxQ.Rmv(remover)
-	for _, t := range removed{
+
+	tp.TxQ.Rmv(remover)
+
+	for _, t := range remover {
 		tp.Ct.Sub(1)
 		tp.CurPri.Sub(CalcPri(t))
 	}
-	tp.mutex.Unlock()
 
+	tp.mutex.Unlock()
 }
