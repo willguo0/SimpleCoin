@@ -197,6 +197,10 @@ func (w *Wallet) HndlTxReq(txR *TxReq) {
 
 	utxoList, change, ok := w.Chain.GetUTXOForAmt(txR.Amt+txR.Fee, hex.EncodeToString(w.Id.GetPublicKeyBytes()))
 
+	for _, utxo := range utxoList {
+		utxo.UTXO.Liminal = true
+	}
+
 	if !ok {
 		return
 	}
