@@ -77,12 +77,15 @@ func CalcPri(t *tx.Transaction) uint32 {
 	if t == nil {
 		return 0
 	}
+
 	priority := t.SumInputs() - t.SumOutputs()
 	priority *= 100
 	priority /= t.Sz()
+
 	if priority == 0 {
 		return 1
 	}
+
 	return priority
 }
 
@@ -110,7 +113,7 @@ func (tp *TxPool) Add(t *tx.Transaction) {
 	tp.mutex.Lock()
 	defer tp.mutex.Unlock()
 
-	if tp == nil || tp.Length()+1 >= tp.Cap || t == nil {
+	if tp == nil || tp.Length() >= tp.Cap || t == nil {
 		return
 	}
 
