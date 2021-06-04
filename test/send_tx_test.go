@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNoUTXO(t *testing.T){
+func TestNoUTXO(t *testing.T) {
 	utils.SetDebug(true)
 	genNd := NewGenNd()
 	node2 := pkg.New(pkg.DefaultConfig(GetFreePort()))
@@ -50,7 +50,7 @@ func TestNoUTXO(t *testing.T){
 	ChkMnChnCons(t, []*pkg.Node{genNd, node2})
 }
 
-func TestSendLiminal(t *testing.T){
+func TestSendLiminal(t *testing.T) {
 	utils.SetDebug(true)
 	genNd := NewGenNd()
 	node2 := pkg.New(pkg.DefaultConfig(GetFreePort()))
@@ -88,6 +88,14 @@ func TestSendLiminal(t *testing.T){
 	ChkTxSeenLen(t, genNd, 1)
 	ChkTxSeenLen(t, node2, 1)
 	time.Sleep(6 * time.Second)
+
+	/*for i, v := range genNd.Chain.List() {
+		fmt.Printf("genNd: %v %v\n", i, v.Hash())
+	}
+
+	for i, v := range node2.Chain.List() {
+		fmt.Printf("node2: %v %v\n", i, v.Hash())
+	}*/
 
 	// making sure the chains are the same
 	ChkMnChnCons(t, []*pkg.Node{genNd, node2})

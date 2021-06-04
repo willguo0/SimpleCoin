@@ -47,15 +47,14 @@ import (
 // b.Sz()
 // n.Chain.ChkChainsUTXO(...)
 func (n *Node) ChkBlk(b *block.Block) bool {
-	if n == nil || b == nil || len(b.Transactions) == 0 {
+	if n == nil || b == nil {
 		return false
 	}
 
 	for i, v := range b.Transactions {
-		if (i == 0) == v.IsCoinbase() || !n.ChkTx(v) {
+		if ((i == 0) && !v.IsCoinbase()) || ((i != 0) && (v.IsCoinbase() || !n.ChkTx(v))) {
 			return false
 		}
-
 	}
 
 	return n.Chain.ChkChainsUTXO(b.Transactions, b.Hdr.PrvBlkHsh) && b.Sz() <= n.Conf.MxBlkSz && b.SatisfiesPOW(b.Hdr.DiffTarg)
