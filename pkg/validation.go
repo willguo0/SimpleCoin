@@ -53,8 +53,14 @@ func (n *Node) ChkBlk(b *block.Block) bool {
 
 	for i, v := range b.Transactions {
 		if i == 0 {
-			if !v.IsCoinbase() {
+			if !v.IsCoinbase() || len(v.Outputs) == 0 {
 				return false
+			}
+
+			for _, vo := range v.Outputs {
+				if vo.Amount <= 0 {
+					return false
+				}
 			}
 		} else {
 			if v.IsCoinbase() || !n.ChkTx(v) {
