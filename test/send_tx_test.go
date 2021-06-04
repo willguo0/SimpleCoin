@@ -89,14 +89,6 @@ func TestSendLiminal(t *testing.T) {
 	ChkTxSeenLen(t, node2, 1)
 	time.Sleep(6 * time.Second)
 
-	/*for i, v := range genNd.Chain.List() {
-		fmt.Printf("genNd: %v %v\n", i, v.Hash())
-	}
-
-	for i, v := range node2.Chain.List() {
-		fmt.Printf("node2: %v %v\n", i, v.Hash())
-	}*/
-
 	// making sure the chains are the same
 	ChkMnChnCons(t, []*pkg.Node{genNd, node2})
 }

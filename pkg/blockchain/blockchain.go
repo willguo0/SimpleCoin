@@ -346,15 +346,15 @@ func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uin
 	bc.Lock()
 	defer bc.Unlock()
 
+	utxoInfoList := make([]*UTXOInfo, 0)
+
 	if amt <= 0 {
-		return nil, 0, true
+		return utxoInfoList, 0, true
 	}
 
 	b := bc.LastBlock
 
 	var bal uint32 = 0
-
-	utxoInfoList := make([]*UTXOInfo, 0)
 
 	for k, v := range b.utxo {
 		if v.LockingScript == pubKey {
@@ -368,7 +368,7 @@ func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uin
 		}
 	}
 
-	return nil, 0, false
+	return utxoInfoList, 0, false
 }
 
 // GenesisBlock creates the genesis block from
