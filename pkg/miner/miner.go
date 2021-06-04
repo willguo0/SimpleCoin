@@ -148,7 +148,7 @@ func (m *Miner) HndlTx(t *tx.Transaction) {
 
 	m.TxP.Add(t)
 
-	if m.Mining.Load() {
+	if m.Active.Load() {
 		m.PoolUpdated <- true
 	}
 }
