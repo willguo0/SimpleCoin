@@ -100,7 +100,7 @@ func (m *Miner) HndlBlk(b *block.Block) {
 		return
 	}
 
-	m.SetHash(b.Hash())
+	m.SetHash(b.Hdr.PrvBlkHsh)
 	m.IncChnLen()
 	m.HndlChkBlk(b)
 }
