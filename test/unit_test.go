@@ -9,20 +9,19 @@ import (
 	"testing"
 )
 
-
-func TestGetUTXOForAmount(t *testing.T){
+func TestGetUTXOForAmount(t *testing.T) {
 	return
 }
-func TestBlockChainAdd(t *testing.T){
+func TestBlockChainAdd(t *testing.T) {
 	return
 }
 
-func TestGenCBTx(t *testing.T){
+func TestGenCBTx(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestTxPoolAdd(t *testing.T){
+func TestTxPoolAdd(t *testing.T) {
 	utils.SetDebug(true)
 	pool := miner.NewTxPool(miner.DefaultConfig(0))
 	input := make([]*proto.TransactionInput, 0)
@@ -36,7 +35,7 @@ func TestTxPoolAdd(t *testing.T){
 		Outputs: output}
 	pool.Add(tx.Deserialize(prioGreaterThanOne))
 	firstEle := pool.TxQ.Peek()
-	if  firstEle == tx.Deserialize(prioGreaterThanOne){
+	if firstEle == tx.Deserialize(prioGreaterThanOne) {
 		t.Errorf("Test errored when adding transaction one" +
 			".\n")
 	}
@@ -51,65 +50,44 @@ func TestTxPoolAdd(t *testing.T){
 	newFirstEle := pool.TxQ.Peek()
 	pool.Add(tx.Deserialize(prioOne))
 	print(pool.TxQ.Len())
-	if pool.TxQ.Len() != 2{
+	if pool.TxQ.Len() != 2 {
 		t.Errorf("Test errored when adding transaction two" +
 			".\n")
 	}
-	if newFirstEle == tx.Deserialize(prioOne){
+	if newFirstEle == tx.Deserialize(prioOne) {
 		t.Errorf("Test errored when adding transaction two" +
 			" added to wrong place.\n")
 	}
-
+	pool.Add(nil)
+	if pool.TxQ.Len() != 2 {
+		t.Errorf("Test errored when adding nil" +
+			".\n")
+	}
 
 	pool = miner.NewTxPool(miner.SmallTxPCapConfig(0))
-	input = make([]*proto.TransactionInput, 0)
-	output = make([]*proto.TransactionOutput, 0)
-	for i := 0; i < 10; i++ {
-		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
-		output = append(output, &proto.TransactionOutput{})
-	}
-
-	prioGreaterThanOne = &proto.Transaction{Inputs: input,
-		Outputs: output}
 	pool.Add(tx.Deserialize(prioGreaterThanOne))
-	firstEle = pool.TxQ.Peek()
-	if  firstEle == tx.Deserialize(prioGreaterThanOne){
-		t.Errorf("Test errored when adding transaction one" +
-			".\n")
-	}
-	input = make([]*proto.TransactionInput, 0)
-	output = make([]*proto.TransactionOutput, 0)
-	for i := 0; i < 10; i++ {
-		input = append(input, &proto.TransactionInput{})
-		output = append(output, &proto.TransactionOutput{})
-	}
-	prioOne = &proto.Transaction{Inputs: input,
-		Outputs: output}
-	newFirstEle = pool.TxQ.Peek()
 	pool.Add(tx.Deserialize(prioOne))
-	print(pool.TxQ.Len())
-	if pool.TxQ.Len() != 2{
-		t.Errorf("Test errored when adding transaction two" +
+	if pool.TxQ.Len() != 1 {
+		t.Errorf("Test errored when adding too many transactions" +
 			".\n")
 	}
-	if newFirstEle == tx.Deserialize(prioOne){
-		t.Errorf("Test errored when adding transaction two" +
-			" added to wrong place.\n")
+	if pool.TxQ.Peek() == tx.Deserialize(prioGreaterThanOne) {
+		t.Errorf("Test errored. kept wrong transaction" +
+			".\n")
 	}
 
-
 }
-func TestHandlBlk(t *testing.T){
+func TestHandlBlk(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestHandlTx(t *testing.T){
+func TestHandlTx(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestCalcPri(t *testing.T){
+func TestCalcPri(t *testing.T) {
 	utils.SetDebug(true)
 	input := make([]*proto.TransactionInput, 0)
 	output := make([]*proto.TransactionOutput, 0)
@@ -155,61 +133,53 @@ func TestCalcPri(t *testing.T){
 	}
 
 }
-func Test(t *testing.T){
+func Test(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestMinerChkTxs(t *testing.T){
+func TestMinerChkTxs(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestHndlChkBlks(t *testing.T){
+func TestHndlChkBlks(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestWalletAdd(t *testing.T){
+func TestWalletAdd(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestWalletChkTxs(t *testing.T){
+func TestWalletChkTxs(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestHndlTxRq(t *testing.T){
+func TestHndlTxRq(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestHndlBlk(t *testing.T){
+func TestHndlBlk(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestChkBlk(t *testing.T){
+func TestChkBlk(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
-func TestChkTx(t *testing.T){
+func TestChkTx(t *testing.T) {
 	utils.SetDebug(true)
 
 	return
 }
 
-var t1 = tx.Transaction{
-
-}
-var t2 = tx.Transaction{
-
-}
-var t3 = tx.Transaction{
-
-}
-var t4 = tx.Transaction{
-
-}
+var t1 = tx.Transaction{}
+var t2 = tx.Transaction{}
+var t3 = tx.Transaction{}
+var t4 = tx.Transaction{}
