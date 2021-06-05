@@ -240,16 +240,18 @@ func TestHndlChkBlks(t *testing.T) {
 	id1, _ := id.New(id.DefaultConfig())
 	miner1 := miner.New(miner.DefaultConfig(0), id1)
 	miner1.HndlChkBlk(nil)
-	input := make([]*proto.TransactionInput, 0)
+	input1 := make([]*proto.TransactionInput, 0)
+	input0 := make([]*proto.TransactionInput, 0)
 	output := make([]*proto.TransactionOutput, 0)
 	transactions := make([]*tx.Transaction, 0)
 	for i := 0; i < 10; i++ {
-		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+		input1 = append(input1, &proto.TransactionInput{Amount: uint32(i)})
+		input0 = append(input0, &proto.TransactionInput{})
 		output = append(output, &proto.TransactionOutput{})
 	}
-	transaction1 := &proto.Transaction{Inputs: input,
+	transaction1 := &proto.Transaction{Inputs: input1,
 		Outputs: output}
-	transaction2 := &proto.Transaction{Inputs: input,
+	transaction2 := &proto.Transaction{Inputs: input0,
 		Outputs: output}
 	transactions = append(transactions, tx.Deserialize(transaction1))
 	block1 := block.New(miner1.PrvHsh, transactions, "2")

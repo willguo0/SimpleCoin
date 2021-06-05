@@ -79,5 +79,31 @@ func TestHndlTxRq(t *testing.T) {
 func TestHndlBlk(t *testing.T) {
 	utils.SetDebug(true)
 
-	return
+	//id, _ := id.CreateSimpleID()
+	//blockchain1 := blockchain.New(blockchain.DefaultConfig())
+	//wallet1 := wallet.New(wallet.DefaultConfig(),id,blockchain1)
+	//wallet1.HndlBlk(nil) //tests nil case
+	//input := make([]*proto.TransactionInput, 0)
+	//output := make([]*proto.TransactionOutput, 0)
+	//for i := 0; i < 10; i++ {
+	//	input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+	//	output = append(output, &proto.TransactionOutput{})
+	//}
+	//transactions := make([]*tx.Transaction, 0)
+	//transaction1 := &proto.Transaction{Inputs: input,
+	//	Outputs: output}
+	//transaction2 := &proto.Transaction{Inputs: input,
+	//	Outputs: output}
+	//wallet1.LmnlTxs.Add(tx.Deserialize(transaction2))
+	//transactions = append(transactions, tx.Deserialize(transaction1),tx.Deserialize(transaction2))
+	//print("1")
+	//
+	//block1 := block.New(blockchain.GenesisBlock(blockchain.DefaultConfig()).Hash(), nil, "2")
+	//wallet1.HndlBlk(block1)//nil transactions
+	//print("1")
+	//block1 = block.New(blockchain.GenesisBlock(blockchain.DefaultConfig()).Hash(), transactions, "2")
+	//wallet1.HndlBlk(block1)//no transactions above priority threshold
+	//wallet1.LmnlTxs.TxQ.Add(500, tx.Deserialize(transaction1))
+	//wallet1.HndlBlk(block1)
+
 }
