@@ -9,14 +9,6 @@ import (
 	"fmt"
 	"testing"
 )
-
-func TestGetUTXOForAmount(t *testing.T) {
-	return
-}
-func TestBlockChainAdd(t *testing.T) {
-	return
-}
-
 func TestGenCBTx(t *testing.T) {
 	utils.SetDebug(true)
 	id1, _ := id.New(id.DefaultConfig())
@@ -100,6 +92,16 @@ func TestHandlTx(t *testing.T) {
 
 	return
 }
+func TestMinerChkTxs(t *testing.T) {
+	utils.SetDebug(true)
+
+	return
+}
+func TestHndlChkBlks(t *testing.T) {
+	utils.SetDebug(true)
+
+	return
+}
 func TestCalcPri(t *testing.T) {
 	utils.SetDebug(true)
 	input := make([]*proto.TransactionInput, 0)
@@ -146,53 +148,3 @@ func TestCalcPri(t *testing.T) {
 	}
 
 }
-func Test(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestMinerChkTxs(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestHndlChkBlks(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestWalletAdd(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestWalletChkTxs(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestHndlTxRq(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestHndlBlk(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestChkBlk(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-func TestChkTx(t *testing.T) {
-	utils.SetDebug(true)
-
-	return
-}
-
-var t1 = tx.Transaction{}
-var t2 = tx.Transaction{}
-var t3 = tx.Transaction{}
-var t4 = tx.Transaction{}
