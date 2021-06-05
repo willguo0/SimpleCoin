@@ -139,8 +139,42 @@ func TestHandlBlk(t *testing.T) {
 }
 func TestHandlTx(t *testing.T) {
 	utils.SetDebug(true)
+	id1, _ := id.New(id.DefaultConfig())
+	miner1 := miner.New(miner.DefaultConfig(0), id1)
+	miner1.HndlTx(nil)
+	input := make([]*proto.TransactionInput, 0)
+	output := make([]*proto.TransactionOutput, 0)
+	for i := 0; i < 10; i++ {
+		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+		output = append(output, &proto.TransactionOutput{})
+	}
+	transaction1 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	transaction2 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	miner1.HndlTx(tx.Deserialize(transaction1))
+	if miner1.TxP.Ct.Load() != 1 {
+		t.Errorf("Test errored. didn't add transaction" +
+			".\n")
+	}
+	if miner1.TxP.CurPri.Load() != miner.CalcPri(tx.Deserialize(transaction1)) {
+		t.Errorf("Test errored. didn't update total priority" +
+			".\n")
+	}
 
-	return
+	val := len(miner1.PoolUpdated)
+	if val != 0 {
+		t.Errorf("Test errored. sent value to poolupdated when shouldn't have" +
+			".\n")
+	}
+	miner1.StartMiner()
+
+	miner1.HndlTx(tx.Deserialize(transaction2))
+	if miner1.TxP.Ct.Load() != 2 {
+		t.Errorf("Test errored. didn't add transaction" +
+			".\n")
+	}
+
 }
 func TestMinerChkTxs(t *testing.T) {
 	utils.SetDebug(true)
