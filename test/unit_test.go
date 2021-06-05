@@ -2,6 +2,7 @@ package test
 
 import (
 	"BrunoCoin/pkg/block/tx"
+	"BrunoCoin/pkg/id"
 	"BrunoCoin/pkg/miner"
 	"BrunoCoin/pkg/proto"
 	"BrunoCoin/pkg/utils"
@@ -18,6 +19,18 @@ func TestBlockChainAdd(t *testing.T) {
 
 func TestGenCBTx(t *testing.T) {
 	utils.SetDebug(true)
+	id1, _ := id.New(id.DefaultConfig())
+	miner1 := miner.New(miner.DefaultConfig(0), id1)
+	transactions := make([]*tx.Transaction, 0)
+
+	if miner1.GenCBTx(transactions) != nil {
+		t.Errorf("Test errored when calculating empty transaction" +
+			".\n")
+	}
+	if miner1.GenCBTx(nil) != nil {
+		t.Errorf("Test errored when calculating nil transaction" +
+			".\n")
+	}
 
 	return
 }
