@@ -218,7 +218,7 @@ func (w *Wallet) HndlTxReq(txR *TxReq) {
 	txoList := []*proto.TransactionOutput{proto.NewTxOutpt(txR.Amt, hex.EncodeToString(txR.PubK))}
 
 	if change > 0 {
-		txoList = append(txoList, proto.NewTxOutpt(txR.Fee, hex.EncodeToString(w.Id.GetPublicKeyBytes())))
+		txoList = append(txoList, proto.NewTxOutpt(change, hex.EncodeToString(w.Id.GetPublicKeyBytes())))
 	}
 
 	tx := tx.Deserialize(proto.NewTx(w.Conf.TxVer, txiList, txoList, w.Conf.DefLckTm))
