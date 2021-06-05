@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
+// BLOCKCHAIN TESTS //
 func TestGetUTXOForAmount(t *testing.T) {
 	return
 }
 func TestBlockChainAdd(t *testing.T) {
 	return
 }
-
 
 var t1 = tx.Transaction{}
 var t2 = tx.Transaction{}

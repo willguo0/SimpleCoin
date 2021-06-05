@@ -13,6 +13,7 @@ import (
 	"testing"
 )
 
+// MINER TESTS //
 func TestGenCBTx(t *testing.T) {
 	utils.SetDebug(true)
 	id1, _ := id.New(id.DefaultConfig())
