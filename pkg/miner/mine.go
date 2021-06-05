@@ -114,7 +114,6 @@ func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
 	c := m.Conf
 
 	hlvgs := m.ChnLen.Load() / c.SubsdyHlvRt
-
 	if hlvgs > c.MxHlvgs {
 		hlvgs = c.MxHlvgs
 	}
@@ -130,7 +129,6 @@ func (m *Miner) GenCBTx(txs []*tx.Transaction) *tx.Transaction {
 
 		totlFee += v.SumInputs() - v.SumOutputs()
 	}
-
 	txiList := make([]*proto.TransactionInput, 0)
 
 	txoList := []*proto.TransactionOutput{proto.NewTxOutpt(mntRwd+totlFee, hex.EncodeToString(m.Id.GetPublicKeyBytes()))}
