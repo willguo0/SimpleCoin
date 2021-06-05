@@ -134,7 +134,37 @@ func TestTxPoolAdd(t *testing.T) {
 }
 func TestHandlBlk(t *testing.T) {
 	utils.SetDebug(true)
-
+	id1, _ := id.New(id.DefaultConfig())
+	miner1 := miner.New(miner.DefaultConfig(0), id1)
+	miner1.HndlBlk(nil)
+	input := make([]*proto.TransactionInput, 0)
+	output := make([]*proto.TransactionOutput, 0)
+	for i := 0; i < 10; i++ {
+		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+		output = append(output, &proto.TransactionOutput{})
+	}
+	transactions := make([]*tx.Transaction, 0)
+	transaction1 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	transaction2 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	transactions = append(transactions, tx.Deserialize(transaction1))
+	block1 := block.New(miner1.PrvHsh, transactions, "2")
+	miner1.HndlTx(tx.Deserialize(transaction1))
+	miner1.HndlTx(tx.Deserialize(transaction2))
+	miner1.HndlBlk(block1)
+	if miner1.TxP.Ct.Load() != 1 {
+		t.Errorf("Test errored. didn't remove the duplicated transactions from the block properly" +
+			".\n")
+	}
+	if miner1.ChnLen.Load() != 2 {
+		t.Errorf("Test errored. didn't increment the channel length properly" +
+			".\n")
+	}
+	if block1.Hash() != miner1.PrvHsh {
+		t.Errorf("Test errored. didn't set the right hash properly" +
+			".\n")
+	}
 	return
 }
 func TestHandlTx(t *testing.T) {
@@ -203,12 +233,33 @@ func TestMinerChkTxs(t *testing.T) {
 		t.Errorf("Test errored. didn't remove the duplicates properly/didn't update the priority" +
 			".\n")
 	}
-	return
 }
 func TestHndlChkBlks(t *testing.T) {
 	utils.SetDebug(true)
+	id1, _ := id.New(id.DefaultConfig())
+	miner1 := miner.New(miner.DefaultConfig(0), id1)
+	miner1.HndlChkBlk(nil)
+	input := make([]*proto.TransactionInput, 0)
+	output := make([]*proto.TransactionOutput, 0)
+	transactions := make([]*tx.Transaction, 0)
+	for i := 0; i < 10; i++ {
+		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+		output = append(output, &proto.TransactionOutput{})
+	}
+	transaction1 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	transaction2 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	transactions = append(transactions, tx.Deserialize(transaction1))
+	block1 := block.New(miner1.PrvHsh, transactions, "2")
+	miner1.HndlTx(tx.Deserialize(transaction1))
+	miner1.HndlTx(tx.Deserialize(transaction2))
+	miner1.HndlChkBlk(block1)
+	if miner1.TxP.Ct.Load() != 1 {
+		t.Errorf("Test errored. didn't remove the duplicated transactions from the block properly" +
+			".\n")
+	}
 
-	return
 }
 
 func TestCalcPri(t *testing.T) {
