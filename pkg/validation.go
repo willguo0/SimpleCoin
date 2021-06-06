@@ -120,5 +120,5 @@ func (n *Node) ChkTx(t *tx.Transaction) bool {
 		}
 	}
 
-	return t.SumInputs() >= t.SumOutputs() && t.Sz() <= n.Conf.MxBlkSz // check with TAs about whether it should be greater / greater or equal (for sum inputs/outputs)
+	return t.SumInputs() >= t.SumOutputs() && t.Sz() <= n.Conf.MxBlkSz
 }
