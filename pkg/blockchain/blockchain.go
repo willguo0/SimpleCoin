@@ -23,7 +23,7 @@ import (
 type BlockchainNode struct {
 	*block.Block
 	PrevNode *BlockchainNode
-	utxo     map[string]*txo.TransactionOutput
+	Utxo     map[string]*txo.TransactionOutput
 	depth    int
 }
 
@@ -53,7 +53,7 @@ func New(conf *Config) *Blockchain {
 	GenesisBlock := &BlockchainNode{
 		Block:    genBlock,
 		PrevNode: nil,
-		utxo:     map[string]*txo.TransactionOutput{genTxKey: genTx.Outputs[0]},
+		Utxo:     map[string]*txo.TransactionOutput{genTxKey: genTx.Outputs[0]},
 		depth:    0,
 	}
 	return &Blockchain{
@@ -105,7 +105,6 @@ func (bc *Blockchain) Add(b *block.Block) {
 
 	newUTXO := make(map[string]*txo.TransactionOutput)
 	deletedUTXO := make(map[string]bool)
-
 	for _, bTx := range b.Transactions {
 		for _, bTxi := range bTx.Inputs {
 			deletedUTXO[txo.MkTXOLoc(bTxi.TransactionHash, bTxi.OutputIndex)] = true
@@ -116,7 +115,7 @@ func (bc *Blockchain) Add(b *block.Block) {
 		}
 	}
 
-	for key, utxo := range bc.blocks[b.Hdr.PrvBlkHsh].utxo {
+	for key, utxo := range bc.blocks[b.Hdr.PrvBlkHsh].Utxo {
 		_, keyIsDeleted := deletedUTXO[key]
 
 		if !keyIsDeleted {
@@ -237,7 +236,7 @@ func (bc *Blockchain) GetUTXO(txi *txi.TransactionInput) *txo.TransactionOutput 
 	bc.Lock()
 	defer bc.Unlock()
 	key := txo.MkTXOLoc(txi.TransactionHash, txi.OutputIndex)
-	utxo, _ := bc.LastBlock.utxo[key]
+	utxo, _ := bc.LastBlock.Utxo[key]
 	return utxo
 }
 
@@ -245,7 +244,7 @@ func (bc *Blockchain) GetUTXOLen(pk string) int {
 	bc.Lock()
 	defer bc.Unlock()
 	ct := 0
-	for _, v := range bc.LastBlock.utxo {
+	for _, v := range bc.LastBlock.Utxo {
 		if v.LockingScript == pk {
 			ct++
 		}
@@ -265,7 +264,7 @@ func (bc *Blockchain) IsInvalidInput(txi *txi.TransactionInput) bool {
 	bc.Lock()
 	defer bc.Unlock()
 	key := txo.MkTXOLoc(txi.TransactionHash, txi.OutputIndex)
-	_, found := bc.LastBlock.utxo[key]
+	_, found := bc.LastBlock.Utxo[key]
 	return !found
 }
 
@@ -291,7 +290,7 @@ func (bc *Blockchain) ChkChainsUTXO(txs []*tx.Transaction, prevHash string) bool
 	for _, t := range txs {
 		for _, txii := range t.Inputs {
 			key := txo.MkTXOLoc(txii.TransactionHash, txii.OutputIndex)
-			if _, found := lastBlock.utxo[key]; !found {
+			if _, found := lastBlock.Utxo[key]; !found {
 				return false
 			}
 			keys = append(keys, key)
@@ -356,13 +355,14 @@ func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uin
 
 	var bal uint32 = 0
 
-	for k, v := range b.utxo {
+	for k, v := range b.Utxo {
 		if v.LockingScript == pubKey && !v.Liminal {
 			bal += v.Amount
 			txHsh, outIdx := txo.PrsTXOLoc(k)
 			utxoInfoList = append(utxoInfoList, &UTXOInfo{txHsh, outIdx, v, v.Amount})
 
 			if bal >= amt {
+				print(bal)
 				return utxoInfoList, bal - amt, true
 			}
 		}
@@ -406,7 +406,7 @@ func GenesisBlock(conf *Config) *block.Block {
 // uint32 the balance that the person has
 func (bc *Blockchain) GetBalance(pk string) uint32 {
 	var bal uint32 = 0
-	for _, v := range bc.LastBlock.utxo {
+	for _, v := range bc.LastBlock.Utxo {
 		if v.LockingScript == pk {
 			bal += v.Amount
 		}
