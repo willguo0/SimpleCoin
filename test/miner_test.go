@@ -13,7 +13,6 @@ import (
 	"testing"
 )
 
-// MINER TESTS //
 func TestGenCBTx(t *testing.T) {
 	utils.SetDebug(true)
 	id1, _ := id.New(id.DefaultConfig())
@@ -199,6 +198,7 @@ func TestHandlTx(t *testing.T) {
 			".\n")
 	}
 	miner1.StartMiner()
+	print(len(miner1.PoolUpdated))
 
 	miner1.HndlTx(tx.Deserialize(transaction2))
 	if miner1.TxP.Ct.Load() != 2 {

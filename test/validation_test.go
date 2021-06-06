@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-// Validation Tests //
 func TestChkBlk(t *testing.T) {
 	utils.SetDebug(true)
 

@@ -13,7 +13,6 @@ import (
  *
  */
 
-
 // TestBootstrapEmpty starts two nodes. It
 // immediately bootstraps node 2 when there is
 // nothing to bootstrap.
@@ -29,7 +28,6 @@ func TestBootstrapEmpty(t *testing.T) {
 
 	// Node connects to the network
 	genNd.ConnectToPeer(node2.Addr)
-
 
 	// Sleep to give time for both nodes to connect
 	time.Sleep(1 * time.Second)
@@ -53,7 +51,6 @@ func TestBootstrapEmpty(t *testing.T) {
 	ChkMnChnLen(t, genNd, 1)
 	ChkMnChnCons(t, []*pkg.Node{genNd, node2})
 }
-
 
 // TestBootstrapTwoNodesTwoBlocks creates two nodes. It only
 // starts one of them and starts the miner for that node (genNd).
@@ -110,7 +107,6 @@ func TestBootstrapTwoNodesTwoBlocks(t *testing.T) {
 	ChkMnChnLen(t, node2, 2)
 	ChkMnChnCons(t, []*pkg.Node{genNd, node2})
 }
-
 
 // TestBootstrapTwoNodesManyBlocks makes two nodes but only
 // starts the genesis node. It then creates 4 transactions
@@ -183,7 +179,7 @@ func TestBootstrapDeadPeer(t *testing.T) {
 		t.Errorf("Test errored when attempting to" +
 			"bootstrap.\n")
 	}
-  time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 5)
 	CheckChainLengths(t, nodes, []int{3, 2, 3})
 }
 

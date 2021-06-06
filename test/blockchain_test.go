@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-// BLOCKCHAIN TESTS //
 func TestGetUTXOForAmount(t *testing.T) {
 	return
 }

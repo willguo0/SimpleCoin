@@ -2,15 +2,17 @@ package test
 
 import (
 	"BrunoCoin/pkg"
+	"BrunoCoin/pkg/block"
 	"BrunoCoin/pkg/block/tx"
+	"BrunoCoin/pkg/blockchain"
+	"BrunoCoin/pkg/id"
 	"BrunoCoin/pkg/proto"
 	"BrunoCoin/pkg/utils"
 	"BrunoCoin/pkg/wallet"
 	"fmt"
 	"testing"
+	"time"
 )
-
-// WALLET TESTS //
 
 // Contents of transaction don't matter but the versions are different to make them distinct
 var transaction1 = tx.Transaction{
@@ -75,8 +77,26 @@ func TestWalletChkTxs(t *testing.T) {
 }
 func TestHndlTxRq(t *testing.T) {
 	utils.SetDebug(true)
-
-	return
+	genNd := NewGenNd()
+	node := pkg.New(pkg.DefaultConfig(GetFreePort()))
+	genNd.Start()
+	node.Start()
+	genNd.ConnectToPeer(node.Addr)
+	genNd.Wallet.HndlTxReq(nil)
+	if genNd.Wallet.LmnlTxs.TxQ.Len() != 0 {
+		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(genNd.Wallet.LmnlTxs.TxQ.Len()))
+	}
+	time.Sleep(2 * time.Second)
+	genNd.Wallet.HndlTxReq(&wallet.TxReq{Amt: 0})
+	if genNd.Wallet.LmnlTxs.TxQ.Len() != 0 {
+		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(genNd.Wallet.LmnlTxs.TxQ.Len()))
+	}
+	genNd.SendTx(20, 50, node.Id.GetPublicKeyBytes()) //Calls wallet.hndltxreq inside
+	node.SendTx(100, 50, genNd.Id.GetPublicKeyBytes())
+	time.Sleep(4 * time.Second)
+	ChkTxSeenLen(t, genNd, 1)
+	ChkTxSeenLen(t, node, 1)
+	ChkMnChnCons(t, []*pkg.Node{genNd, node})
 }
 
 func TestHndlBlk(t *testing.T) {
@@ -99,9 +119,9 @@ func TestHndlBlk(t *testing.T) {
 		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
 		output = append(output, &proto.TransactionOutput{})
 	}
-	//transactions := make([]*tx.Transaction, 0)
-	//transaction1 := &proto.Transaction{Inputs: input,
-	//	Outputs: output}
+	transaction1 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+
 	transaction2 := &proto.Transaction{Inputs: input,
 		Outputs: output}
 	wallet1.LmnlTxs.Add(tx.Deserialize(transaction2))
@@ -117,7 +137,17 @@ func TestHndlBlk(t *testing.T) {
 		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 
 	}
-	//transactions = append(transactions, tx.Deserialize(transaction1),tx.Deserialize(transaction2))
-	//wallet1.LmnlTxs.TxQ.Add(500, tx.Deserialize(transaction1))
-	//wallet1.HndlBlk(block1)
+	transactions := make([]*tx.Transaction, 0)
+	transactions = append(transactions, tx.Deserialize(transaction1), tx.Deserialize(transaction2))
+	block0 := block.New("", transactions, "")
+	id1, _ := id.CreateSimpleID()
+	w := wallet.New(wallet.DefaultConfig(), id1, blockchain.New(blockchain.DefaultConfig()))
+	w.LmnlTxs.TxQ.Add(100, tx.Deserialize(transaction1))
+	if w.LmnlTxs.TxQ.Len() != 1 {
+		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+	}
+	w.HndlBlk(block0)
+	if w.LmnlTxs.TxQ.Len() != 0 {
+		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+	}
 }
