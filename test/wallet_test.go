@@ -1,7 +1,9 @@
 package test
 
 import (
+	"BrunoCoin/pkg"
 	"BrunoCoin/pkg/block/tx"
+	"BrunoCoin/pkg/proto"
 	"BrunoCoin/pkg/utils"
 	"BrunoCoin/pkg/wallet"
 	"fmt"
@@ -76,34 +78,46 @@ func TestHndlTxRq(t *testing.T) {
 
 	return
 }
+
 func TestHndlBlk(t *testing.T) {
 	utils.SetDebug(true)
-
-	//id, _ := id.CreateSimpleID()
-	//blockchain1 := blockchain.New(blockchain.DefaultConfig())
-	//wallet1 := wallet.New(wallet.DefaultConfig(),id,blockchain1)
-	//wallet1.HndlBlk(nil) //tests nil case
-	//input := make([]*proto.TransactionInput, 0)
-	//output := make([]*proto.TransactionOutput, 0)
-	//for i := 0; i < 10; i++ {
-	//	input = append(input, &proto.TransactionInput{Amount: uint32(i)})
-	//	output = append(output, &proto.TransactionOutput{})
-	//}
+	node1 := pkg.New(pkg.DefaultConfig(1))
+	block1 := node1.Chain.GetLastBlock()
+	wallet1 := node1.Wallet
+	len1 := wallet1.LmnlTxs.TxQ.Len()
+	wallet1.HndlBlk(nil) //tests nil case
+	if len1 != wallet1.LmnlTxs.TxQ.Len() {
+		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+	}
+	wallet1.HndlBlk(block1) //tests case where no transaction passes priority
+	if len1 != wallet1.LmnlTxs.TxQ.Len() {
+		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+	}
+	input := make([]*proto.TransactionInput, 0)
+	output := make([]*proto.TransactionOutput, 0)
+	for i := 0; i < 2; i++ {
+		input = append(input, &proto.TransactionInput{Amount: uint32(i)})
+		output = append(output, &proto.TransactionOutput{})
+	}
 	//transactions := make([]*tx.Transaction, 0)
 	//transaction1 := &proto.Transaction{Inputs: input,
 	//	Outputs: output}
-	//transaction2 := &proto.Transaction{Inputs: input,
-	//	Outputs: output}
-	//wallet1.LmnlTxs.Add(tx.Deserialize(transaction2))
+	transaction2 := &proto.Transaction{Inputs: input,
+		Outputs: output}
+	wallet1.LmnlTxs.Add(tx.Deserialize(transaction2))
+	wallet1.HndlBlk(block1) //none of them are above the limit
+	if wallet1.LmnlTxs.TxQ.Len() != 1 {
+		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+
+	}
+	transactions3 := block1.Transactions[0]
+	wallet1.LmnlTxs.Add(transactions3)
+	wallet1.HndlBlk(block1) //one of them is in block
+	if wallet1.LmnlTxs.TxQ.Len() != 1 {
+		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+
+	}
 	//transactions = append(transactions, tx.Deserialize(transaction1),tx.Deserialize(transaction2))
-	//print("1")
-	//
-	//block1 := block.New(blockchain.GenesisBlock(blockchain.DefaultConfig()).Hash(), nil, "2")
-	//wallet1.HndlBlk(block1)//nil transactions
-	//print("1")
-	//block1 = block.New(blockchain.GenesisBlock(blockchain.DefaultConfig()).Hash(), transactions, "2")
-	//wallet1.HndlBlk(block1)//no transactions above priority threshold
 	//wallet1.LmnlTxs.TxQ.Add(500, tx.Deserialize(transaction1))
 	//wallet1.HndlBlk(block1)
-
 }

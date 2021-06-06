@@ -129,7 +129,6 @@ func (w *Wallet) HndlBlk(b *block.Block) {
 	}
 
 	threshPriorityTxs, _ := w.LmnlTxs.ChkTxs(b.Transactions)
-	print("hi")
 
 	if threshPriorityTxs == nil {
 		return
