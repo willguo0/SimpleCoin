@@ -54,6 +54,7 @@ func (n *Node) ChkBlk(b *block.Block) bool {
 	for i, v := range b.Transactions {
 		if i == 0 {
 			if !v.IsCoinbase() || len(v.Outputs) == 0 {
+				print("hello")
 				return false
 			}
 

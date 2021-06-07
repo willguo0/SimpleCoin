@@ -362,7 +362,6 @@ func (bc *Blockchain) GetUTXOForAmt(amt uint32, pubKey string) ([]*UTXOInfo, uin
 			utxoInfoList = append(utxoInfoList, &UTXOInfo{txHsh, outIdx, v, v.Amount})
 
 			if bal >= amt {
-				print(bal)
 				return utxoInfoList, bal - amt, true
 			}
 		}
