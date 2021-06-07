@@ -22,8 +22,9 @@ func TestWalletAdd(t *testing.T) {
 	utils.SetDebug(true)
 
 	var transaction1 = tx.Transaction{}
-
 	var transaction2 = tx.Transaction{}
+	var transaction3 = tx.Transaction{}
+	var transaction4 = tx.Transaction{}
 
 	lt := wallet.NewLmnlTxs(wallet.DefaultConfig())
 
@@ -45,6 +46,14 @@ func TestWalletAdd(t *testing.T) {
 		t.Errorf("Failed: Heap should have 2 txs but it has " + fmt.Sprint(lt.TxQ.Len()))
 	}
 
+	lt.Add(&transaction3)
+	lt.Add(&transaction4)
+	lt.Add(nil)
+	lt.Add(nil)
+
+	if lt.TxQ.Len() != 4 {
+		t.Errorf("Failed: Heap should have 4 txs but it has " + fmt.Sprint(lt.TxQ.Len()))
+	}
 }
 func TestWalletChkTxs(t *testing.T) {
 	utils.SetDebug(true)
@@ -70,33 +79,35 @@ func TestWalletChkTxs(t *testing.T) {
 	transactions = append(transactions, &transaction2)
 
 	liminal := wallet.NewLmnlTxs(wallet.DefaultConfig())
+
 	liminal.Add(&transaction1)
 	liminal.Add(&transaction4)
-	liminal.TxQ.Add(500, &transaction3)
+
+	liminal.TxQ.Add(12345, &transaction3)
 
 	ans1, ans2 := liminal.ChkTxs(nil)
 
 	if ans1 != nil || ans2 != nil {
-		t.Errorf("Failed: When checking nil transactions, should return nil")
+		t.Errorf("Failed: Should return nil when checking nil transaction")
 
 	}
 
 	txsAbove, duplicatedtxs := liminal.ChkTxs(transactions)
 
 	if len(txsAbove) != 1 {
-		t.Errorf("Failed: number of elements above the threshold should be 1 but instead is " + fmt.Sprint(len(txsAbove)))
+		t.Errorf("Failed: There should be exactly one element above the threshold, but there are actually " + fmt.Sprint(len(txsAbove)) + "\n")
 	}
 
 	if len(duplicatedtxs) != 1 {
-		t.Errorf("Failed: number of elements removed should be 1 but instead is " + fmt.Sprint(len(duplicatedtxs)))
+		t.Errorf("Failed: There should be exactly one element removed, but there are actually " + fmt.Sprint(len(duplicatedtxs)) + "\n")
 	}
 
 	if duplicatedtxs[0] != &transaction1 {
-		t.Errorf("Failed: The duplicated transaction was returned wrong")
+		t.Errorf("Failed: Duplicated transactions were not calculated properly\n")
 	}
 
 	if liminal.TxQ.Len() != 1 {
-		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(liminal.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(liminal.TxQ.Len()) + "\n")
 	}
 }
 func TestHndlTxRq(t *testing.T) {
@@ -164,7 +175,7 @@ func TestHndlBlk(t *testing.T) {
 	transaction2 := &proto.Transaction{Inputs: input, Outputs: output}
 
 	wallet1.LmnlTxs.Add(tx.Deserialize(transaction2))
-	wallet1.HndlBlk(block1) //none of them are above the limit
+	wallet1.HndlBlk(block1) // none of them are above the limit
 
 	if wallet1.LmnlTxs.TxQ.Len() != 1 {
 		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
