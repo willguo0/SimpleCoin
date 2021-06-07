@@ -49,6 +49,7 @@ func TestGetUTXOForAmount(t *testing.T) {
 		LockingScript: "trans2",
 		Liminal:       false,
 	}
+
 	transactionOutput5 := txo.TransactionOutput{
 		Amount:        20,
 		LockingScript: "trans2",
