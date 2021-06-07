@@ -119,7 +119,7 @@ func TestHndlTxRq(t *testing.T) {
 	genNd.Wallet.HndlTxReq(&wallet.TxReq{Amt: 0})
 
 	if genNd.Wallet.LmnlTxs.TxQ.Len() != 0 {
-		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(genNd.Wallet.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 0 txs but it has " + fmt.Sprint(genNd.Wallet.LmnlTxs.TxQ.Len()))
 	}
 
 	genNd.SendTx(20, 50, node.Id.GetPublicKeyBytes()) //Calls wallet.hndltxreq inside
@@ -142,13 +142,13 @@ func TestHndlBlk(t *testing.T) {
 	wallet1.HndlBlk(nil) //tests nil case
 
 	if len1 != wallet1.LmnlTxs.TxQ.Len() {
-		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 0 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 	}
 
 	wallet1.HndlBlk(block1) //tests case where no transaction passes priority
 
 	if len1 != wallet1.LmnlTxs.TxQ.Len() {
-		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 0 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 	}
 
 	input := make([]*proto.TransactionInput, 0)
@@ -167,7 +167,7 @@ func TestHndlBlk(t *testing.T) {
 	wallet1.HndlBlk(block1) //none of them are above the limit
 
 	if wallet1.LmnlTxs.TxQ.Len() != 1 {
-		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 
 	}
 
@@ -176,7 +176,7 @@ func TestHndlBlk(t *testing.T) {
 	wallet1.HndlBlk(block1) //one of them is in block
 
 	if wallet1.LmnlTxs.TxQ.Len() != 1 {
-		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 
 	}
 
@@ -189,12 +189,12 @@ func TestHndlBlk(t *testing.T) {
 	w.LmnlTxs.TxQ.Add(100, tx.Deserialize(transaction1))
 
 	if w.LmnlTxs.TxQ.Len() != 1 {
-		t.Errorf("Failed: Length of heap should be 1 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 	}
 
 	w.HndlBlk(block0)
 
 	if w.LmnlTxs.TxQ.Len() != 0 {
-		t.Errorf("Failed: Length of heap should be 0 but it is " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
+		t.Errorf("Failed: Heap should have 1 txs but it has " + fmt.Sprint(wallet1.LmnlTxs.TxQ.Len()))
 	}
 }
