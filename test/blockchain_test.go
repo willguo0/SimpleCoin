@@ -62,30 +62,26 @@ func TestGetUTXOForAmount(t *testing.T) {
 
 	utxoinfo, change, hasenough := bc.GetUTXOForAmt(0, "trans1") //tests 0 transaction
 
-	if !hasenough {
-		t.Errorf("Error There should be enough")
+	if len(utxoinfo) != 0 {
+		t.Errorf("Error Size of UTXOinfo list should be 0 but it is " + fmt.Sprint(len(utxoinfo)))
 	}
-
 	if change != 0 {
 		t.Errorf("Error Change should be 0 but it is " + fmt.Sprint(change))
 	}
-
-	if len(utxoinfo) != 0 {
-		t.Errorf("Error Size of UTXOinfo list should be 0 but it is " + fmt.Sprint(len(utxoinfo)))
+	if !hasenough {
+		t.Errorf("Error There should be enough")
 	}
 
 	utxoinfo, change, hasenough = bc.GetUTXOForAmt(8, "trans1")
 
-	if !hasenough {
-		t.Errorf("Error There should be enough")
+	if len(utxoinfo) != 2 {
+		t.Errorf("Error Size of UTXOinfo list should be 2 but it is " + fmt.Sprint(len(utxoinfo)))
 	}
-
 	if change != 3 {
 		t.Errorf("Error Change should be 3 but it is " + fmt.Sprint(change))
 	}
-
-	if len(utxoinfo) != 2 {
-		t.Errorf("Error Size of UTXOinfo list should be 2 but it is " + fmt.Sprint(len(utxoinfo)))
+	if !hasenough {
+		t.Errorf("Error There should be enough")
 	}
 
 	_, _, hasenough2 := bc.GetUTXOForAmt(100, "trans2")
