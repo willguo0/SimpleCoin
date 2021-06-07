@@ -45,8 +45,11 @@ func TestGetUTXOForAmount(t *testing.T) {
 	}
 
 	utxoMap[txo.MkTXOLoc(transactionOutput1.Hash(), 0)] = &transactionOutput1
+
 	utxoMap[txo.MkTXOLoc(transactionOutput2.Hash(), 0)] = &transactionOutput2
+
 	utxoMap[txo.MkTXOLoc(transactionOutput3.Hash(), 0)] = &transactionOutput3
+
 	utxoMap[txo.MkTXOLoc(transactionOutput4.Hash(), 0)] = &transactionOutput4
 
 	block1 := blockchain.BlockchainNode{
@@ -57,38 +60,38 @@ func TestGetUTXOForAmount(t *testing.T) {
 		LastBlock: &block1,
 	}
 
-	utxoinfo, change, hasenough := bc.GetUTXOForAmt(0, "trans1")
+	utxoinfo, change, hasenough := bc.GetUTXOForAmt(0, "trans1") //tests 0 transaction
 
 	if !hasenough {
-		t.Errorf("Test Failed: There should be enough utxo")
+		t.Errorf("Error There should be enough")
 	}
 
 	if change != 0 {
-		t.Errorf("Test Failed: Change should be 0 but it is " + fmt.Sprint(change))
+		t.Errorf("Error Change should be 0 but it is " + fmt.Sprint(change))
 	}
 
 	if len(utxoinfo) != 0 {
-		t.Errorf("Test Failed: Length of UTXOinfo list should be 0 but it is " + fmt.Sprint(len(utxoinfo)))
+		t.Errorf("Error Size of UTXOinfo list should be 0 but it is " + fmt.Sprint(len(utxoinfo)))
 	}
 
 	utxoinfo, change, hasenough = bc.GetUTXOForAmt(8, "trans1")
 
 	if !hasenough {
-		t.Errorf("Test Failed: There should be enough utxo")
+		t.Errorf("Error There should be enough")
 	}
 
 	if change != 3 {
-		t.Errorf("Test Failed: Change should be 3 but it is " + fmt.Sprint(change))
+		t.Errorf("Error Change should be 3 but it is " + fmt.Sprint(change))
 	}
 
 	if len(utxoinfo) != 2 {
-		t.Errorf("Test Failed: Length of UTXOinfo list should be 2 but it is " + fmt.Sprint(len(utxoinfo)))
+		t.Errorf("Error Size of UTXOinfo list should be 2 but it is " + fmt.Sprint(len(utxoinfo)))
 	}
 
 	_, _, hasenough2 := bc.GetUTXOForAmt(100, "trans2")
 
 	if hasenough2 {
-		t.Errorf("Test Failed: There shouldn't be enough utxo")
+		t.Errorf("Error There shouldn't be enough")
 	}
 }
 
