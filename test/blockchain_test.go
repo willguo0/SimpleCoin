@@ -20,6 +20,12 @@ func TestGetUTXOForAmount(t *testing.T) {
 
 	utxoMap := make(map[string]*txo.TransactionOutput)
 
+	transactionOutput0 := txo.TransactionOutput{
+		Amount:        5,
+		LockingScript: "trans1",
+		Liminal:       true,
+	}
+
 	transactionOutput1 := txo.TransactionOutput{
 		Amount:        5,
 		LockingScript: "trans1",
@@ -43,6 +49,13 @@ func TestGetUTXOForAmount(t *testing.T) {
 		LockingScript: "trans2",
 		Liminal:       false,
 	}
+	transactionOutput5 := txo.TransactionOutput{
+		Amount:        20,
+		LockingScript: "trans2",
+		Liminal:       true,
+	}
+
+	utxoMap[txo.MkTXOLoc(transactionOutput0.Hash(), 0)] = &transactionOutput0
 
 	utxoMap[txo.MkTXOLoc(transactionOutput1.Hash(), 0)] = &transactionOutput1
 
@@ -51,6 +64,8 @@ func TestGetUTXOForAmount(t *testing.T) {
 	utxoMap[txo.MkTXOLoc(transactionOutput3.Hash(), 0)] = &transactionOutput3
 
 	utxoMap[txo.MkTXOLoc(transactionOutput4.Hash(), 0)] = &transactionOutput4
+
+	utxoMap[txo.MkTXOLoc(transactionOutput5.Hash(), 0)] = &transactionOutput5
 
 	block1 := blockchain.BlockchainNode{
 		Utxo: utxoMap,
